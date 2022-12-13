@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="7729fa1a-3de9-4abe-99d9-896de64a406f" name="dreamhost" url="http://64.90.58.190">
+        <fileTransfer host="64.90.58.190" port="22" rootFolder="/home/dh_nossa" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
