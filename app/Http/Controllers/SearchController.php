@@ -54,6 +54,11 @@ class SearchController extends Controller
         ]);
     }
 
+    public function advanced_livewire() {
+
+        return view('advanced_search_livewire');
+    }
+
     private function sanitizeSearchTerms($string)
     {
         $clean = strip_tags($string);

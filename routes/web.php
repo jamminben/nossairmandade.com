@@ -29,6 +29,7 @@ Route::get('/friends', 'StaticPageController@friends');
 Route::get('/links.php', 'StaticPageController@friends');
 Route::get('/donate', 'StaticPageController@donate');
 Route::get('/search', 'SearchController@advanced');
+Route::get('/search2', 'SearchController@advanced_livewire');
 Route::get('/faq', 'StaticPageController@faq');
 Route::get('/portuguese/for-beginners', 'StaticPageController@forBeginners');
 Route::get('/norms-and-rituals', 'StaticPageController@normsAndRituals');
