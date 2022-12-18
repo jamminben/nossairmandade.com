@@ -25,11 +25,10 @@ class Search extends Component
         $this->contains = request()->get('hymn_contains');
         $this->receivedBy = request()->get('received_by');
         $this->offeredTo = request()->get('offered_to');
-    }
 
-    public function render()
-    {
 
+        //ONLY LOADS ON PAGE LOAD
+        //IF YOU WANT THIS TO RUN DYNAMICALLY, MOVE IT TO render() AND MOVE THE PORTION ON THE VIEW TO A COMPONENT
         $hymnTranslationsQuery = HymnTranslation::where('hymn_translations.id', '>', 0);
         $run = false;
 
@@ -60,8 +59,11 @@ class Search extends Component
             $hymnTranslations = collect( [] );
         }
         $this->hymnTranslations = $hymnTranslations;
-        Log::info( $this->hymnTranslations );
 
+    }
+
+    public function render()
+    {
 
         $people_received = Person::leftJoin('hymns', 'received_by', '=', 'persons.id')
         ->groupBy(['persons.display_name', 'persons.id'])

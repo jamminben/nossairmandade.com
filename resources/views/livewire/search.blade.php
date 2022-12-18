@@ -40,7 +40,7 @@
     </form>
 </div>
 <div class="col-xs-6">
-    @if ($hymnTranslations)
+    @if ($hymnTranslations->count() > 0)
         <h3>{{ __('search.results') }}:</h3>
 
         @foreach ($hymnTranslations as $hymnTranslation)
