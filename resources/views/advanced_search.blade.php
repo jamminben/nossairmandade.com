@@ -31,7 +31,7 @@
                         @foreach($people as $person)
                             <option value="{{ $person->id }}"
                                 @if ($receivedBy == $person->id) SELECTED @endif
-                            >{{ $person->display_name }}</option>
+                            >{{ $person->display_name }} ({{ $person->hymns_count }})</option>
                         @endforeach
                     </select>
                 </div>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\HymnTranslation;
 use App\Models\Person;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SearchController extends Controller
 {
@@ -14,6 +15,7 @@ class SearchController extends Controller
         $contains = $this->sanitizeSearchTerms($request->get('hymn_contains'));
 
         $receivedBy = $request->get('received_by', '');
+        // dd($receivedBy);
         $offeredTo = $request->get('offered_to', '');
 
         if (!empty($request->get('hymn_contains'))) {
@@ -37,7 +39,11 @@ class SearchController extends Controller
             $hymnTranslations = collect( [] );
         }
 
-        $people = Person::orderBy('display_name')->get();
+        $people = Person::leftJoin('hymns', 'received_by', '=', 'persons.id')
+            ->groupBy(['persons.display_name', 'persons.id'])
+            ->select('persons.id', 'display_name', DB::raw('count(hymns.id) as hymns_count'))
+            ->orderBy('display_name')
+            ->get();
 
         return view('advanced_search', [
             'people' => $people,
