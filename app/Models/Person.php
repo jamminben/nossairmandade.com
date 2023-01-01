@@ -29,7 +29,7 @@ class Person extends ModelWithTranslations
                 if (getUrlExists(url($personImage->image->path))) {
                     return $personImage->image->path;
                 } else {
-                    die(url($personImage->image->path));
+                    return url($personImage->image->path);
                 }
             }
         }

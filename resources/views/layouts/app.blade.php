@@ -9,6 +9,7 @@
 <head>
 
     @include('layouts.partials.head')
+    @livewireStyles
 
 </head>
 
@@ -55,6 +56,7 @@
     </div>
 
     @include('layouts.partials.footer_js')
+    @livewireScripts
 
 </body>
 
