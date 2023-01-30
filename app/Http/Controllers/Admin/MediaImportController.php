@@ -14,11 +14,12 @@ use App\Models\MediaFile;
 use App\Models\MediaSource;
 use App\Models\MediaSourceTranslation;
 use App\Models\PersonMediaFile;
-use Chumper\Zipper\Facades\Zipper;
+// use Chumper\Zipper\Facades\Zipper;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use ZipArchive;
 
 class MediaImportController extends Controller
 {
@@ -268,9 +269,22 @@ class MediaImportController extends Controller
             }
 
             try {
-                $zipper = Zipper::make($zipFileName);
-                $zipper->add($filesToZip);
-                $zipper->close();
+                // $zipper = Zipper::make($zipFileName);
+                // $zipper->add($filesToZip);
+                // $zipper->close();
+
+                $zip_archive = new ZipArchive;
+
+                if ($zip_archive->open(public_path($zipFileName), ZipArchive::CREATE) === TRUE) 
+                {
+                    // loop the files result
+                    foreach ($filesToZip as $key => $value) {
+                        $relativeNameInZipFile = basename($value);
+                        $zip_archive->addFile($value, $relativeNameInZipFile);
+                    }
+                    $zip_archive->close();
+                }
+
 
                 $mediaFile = MediaFile::where('path', $zipFileName)->first();
                 if (empty($mediaFile)) {

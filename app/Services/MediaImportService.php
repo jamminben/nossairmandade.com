@@ -9,9 +9,10 @@ use App\Models\Hymn;
 use App\Models\HymnMediaFile;
 use App\Models\MediaFile;
 use App\Models\MediaFileImportMessage;
-use Chumper\Zipper\Facades\Zipper;
+// use Chumper\Zipper\Facades\Zipper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use ZipArchive;
 
 class MediaImportService
 {
@@ -175,7 +176,9 @@ class MediaImportService
 
     public function generateHinarioRecordingsZips($hinarioId)
     {
-        $hinarioFileRoot = '/home/dh_nossa/nossairmandade.com/public/media/hinarios/';
+        // $hinarioFileRoot = '/home/dh_nossa/nossairmandade.com/public/media/hinarios/';
+        $hinarioFileRoot = base_path() . '/public/media/hinarios/';
+        // dd($hinarioFileRoot);
 
         $files = [];
         $hinario = Hinario::where('id', $hinarioId)
@@ -222,9 +225,21 @@ class MediaImportService
             }
 
             try {
-                $zipper = Zipper::make($zipFileName);
-                $zipper->add($filesToZip);
-                $zipper->close();
+                // $zipper = Zipper::make($zipFileName);
+                // $zipper->add($filesToZip);
+                // $zipper->close();
+                
+                $zip_archive = new ZipArchive;
+
+                if ($zip_archive->open(public_path($zipFileName), ZipArchive::CREATE) === TRUE) 
+                {
+                    // loop the files result
+                    foreach ($filesToZip as $key => $value) {
+                        $relativeNameInZipFile = basename($value);
+                        $zip_archive->addFile($value, $relativeNameInZipFile);
+                    }
+                    $zip_archive->close();
+                }
 
                 $mediaFile = MediaFile::where('path', $zipFileName)->first();
                 if (empty($mediaFile)) {
