@@ -3,7 +3,7 @@
         @foreach ($entity->otherMedia as $media)
             <li>
                 <a href="{{ url($media->url) }}">{{ $media->filename }}</a><br>
-                {{ __('hinarios.source') }} <a href="{{ $media->source->url }}" target="_blank">{{ $media->source->getDescription() }}</a>
+                {{ __('hinarios.source') }} <a href="{{ $media->source->url }}" target="_blank">{{-- $media->source->getDescription() --}} Source</a>
             </li>
         @endforeach
     </ul>
