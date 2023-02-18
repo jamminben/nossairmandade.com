@@ -110,7 +110,7 @@
         <div class="row">
             <div class="col-sm-12 col-md-12 col-lg-12 padding-top-20">
                 <!-- feedback form -->
-                @if (\Illuminate\Support\Facades\Auth::check())
+                @if ( !is_null($hinario) && \Illuminate\Support\Facades\Auth::check())
                     @include('layouts.partials.feedback_form', [ 'entityType' => 'hinario', 'entityId' => $hinario->id ])
                 @endif
             </div>
@@ -118,7 +118,7 @@
         <div class="row">
             <div class="col-sm-12 col-md-12 col-lg-12 padding-top-20">
                 <!-- add media form -->
-                @if (\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::user()->hasRole('superadmin'))
+                @if ( !is_null($hinario) && \Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::user()->hasRole('superadmin'))
                     @include('admin.layouts.partials.add_media_form', [ 'entityType' => 'hinario', 'entityId' => $hinario->id ])
                 @endif
             </div>
