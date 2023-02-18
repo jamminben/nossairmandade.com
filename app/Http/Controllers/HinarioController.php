@@ -7,6 +7,7 @@ use App\Models\UserHinario;
 use App\Services\GlobalFunctions;
 use App\Services\HinarioService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Mpdf\Mpdf;
 
 class HinarioController extends Controller
@@ -40,6 +41,8 @@ class HinarioController extends Controller
     public function showPreloaded($hinarioId, $hinarioName = null)
     {
         $hinario = Hinario::where('id', $hinarioId)->first();
+        // Log::info($hinarioId);
+        // Log::info($hinario);
 
         GlobalFunctions::setActiveHinario($hinarioId);
 
@@ -50,14 +53,15 @@ class HinarioController extends Controller
             $userHinarios = [];
         }
 
-        $displaySections = count($hinario->getSections()) > 1;
+        // $displaySections = count($hinario->getSections()) > 1;
 
-        if (empty($hinario->preloaded_json)) {
+        if (!is_null($hinario) && empty($hinario->preloaded_json)) {
             $this->hinarioService->preloadHinario($hinarioId);
             $hinario->refresh();
         }
 
-        $hinarioData = json_decode($hinario->preloaded_json);
+        $hinarioData = !is_null($hinario) ? json_decode($hinario->preloaded_json) : null;
+        // Log::info($hinarioData);
 
         return view('hinarios.hinario',
             [

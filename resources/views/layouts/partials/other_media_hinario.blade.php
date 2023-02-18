@@ -1,4 +1,4 @@
-@if (count($entity->otherMedia) > 0)
+@if (!is_null($entity) && count($entity->otherMedia) > 0)
     <ul class="list2 downloadlist">
         @foreach ($entity->otherMedia as $media)
             <li>

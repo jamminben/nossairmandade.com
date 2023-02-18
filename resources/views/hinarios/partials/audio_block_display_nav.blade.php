@@ -1,4 +1,4 @@
-@if (count($hinario->recordingSources) > 0)
+@if (!is_null($hinario) && count($hinario->recordingSources) > 0)
     <div class="row vertical-tabs color4">
         <!-- Nav tabs -->
         <ul class="nav less-padding" role="tablist">
