@@ -29,7 +29,8 @@ class Search extends Component
 
         //ONLY LOADS ON PAGE LOAD
         //IF YOU WANT THIS TO RUN DYNAMICALLY, MOVE IT TO render() AND MOVE THE PORTION ON THE VIEW TO A COMPONENT
-        $hymnTranslationsQuery = HymnTranslation::where('hymn_translations.id', '>', 0);
+        $hymnTranslationsQuery = HymnTranslation::select('hymn_translations.hymn_id', 'hymn_translations.name')
+            ->where('hymn_translations.id', '>', 0);
         $run = false;
 
         if ($this->contains) {
@@ -37,12 +38,12 @@ class Search extends Component
             $run = true;
         }
         if ($this->receivedBy) {
-            $hymnTranslationsQuery->join('hymns', 'hymn_translations.hymn_id', '=', 'hymns.id')
+            $hymnTranslationsQuery->leftJoin('hymns', 'hymn_translations.hymn_id', '=', 'hymns.id')
                 ->where('hymns.received_by', $this->receivedBy);
             $run = true;
         }
         if ($this->offeredTo) {
-            $hymnTranslationsQuery->join('hymns as h', 'hymn_translations.hymn_id', '=', 'h.id')
+            $hymnTranslationsQuery->leftJoin('hymns as h', 'hymn_translations.hymn_id', '=', 'h.id')
                 ->where('hymns.offered_to', $this->offeredTo);
             $run = true;
         }
@@ -53,7 +54,9 @@ class Search extends Component
         if ($run) {
             // $hymnTranslations = $hymnTranslationsQuery->paginate(20);
             //LIVEWIRE DOESN'T WORK READILY WITH PAGINATE
-            $hymnTranslations = $hymnTranslationsQuery->get();
+            $hymnTranslations = $hymnTranslationsQuery
+                ->groupBy(['hymn_translations.hymn_id', 'hymn_translations.name'])
+                ->get();
             // Log::info($hymnTranslations);
         } else {
             $hymnTranslations = collect( [] );
