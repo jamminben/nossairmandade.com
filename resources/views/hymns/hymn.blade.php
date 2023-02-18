@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('header_title')
-    {{ mb_convert_case($hymn->getName(), MB_CASE_TITLE, 'UTF-8') }}
+    {{ !is_null($hymn) ? mb_convert_case($hymn->getName(), MB_CASE_TITLE, 'UTF-8') : null }}
 @endsection
 
 @section('panzer')
@@ -17,7 +17,7 @@
 @endsection
 
 @section('page_title')
-    <h2 class="small display_table_cell_md">{{ mb_convert_case($hymn->getName($hymn->original_language_id), MB_CASE_TITLE, 'UTF-8') }}</h2>
+    <h2 class="small display_table_cell_md">{{ !is_null($hymn) ?  mb_convert_case($hymn->getName($hymn->original_language_id), MB_CASE_TITLE, 'UTF-8') : null }}</h2>
     @if (\Illuminate\Support\Facades\Auth::check())
         <div class="hymn-title-add-form">
             <ul class="nav navbar-nav navbar-right add-hymn">
@@ -53,32 +53,34 @@
             <div class="row">
                 <!-- hinario breadcrumbs -->
                 <div class="col-sm-12 col-md-12">
-                    @foreach ($hymn->getHinarios() as $hinario)
-                        @if ($loop->index == 1)
-                            <div class="hinario-breadcrumb-also">{{ __('hymns.breadcrumbs.also_in') }}:</div>
-                        @endif
-                        <div class="@if ($loop->first) hinario-breadcrumb-bold @else hinario-breadcrumb @endif">
-                            @if ($loop->first)
-                                @php
-                                    $previousHymn = $hinario->getPreviousHymn($hymn->id);
-                                @endphp
-                                @if (!empty($previousHymn))
-                                    <a href="{{ url($previousHymn->getSlug()) }}" title="{{ mb_convert_case($previousHymn->getName($previousHymn->original_language_id), MB_CASE_TITLE, 'UTF-8') }}"><i class="far fa-arrow-alt-circle-left"></i> {{ __('hymns.breadcrumbs.previous') }} :: </a>
-                                @endif
+                    @if(!is_null($hymn))
+                        @foreach ($hymn->getHinarios() as $hinario)
+                            @if ($loop->index == 1)
+                                <div class="hinario-breadcrumb-also">{{ __('hymns.breadcrumbs.also_in') }}:</div>
                             @endif
-                            <span class="hinario-breadcrumb-hinario">
-                                <a href="{{ url($hinario->getSlug()) }}">{{ $hinario->getName($hinario->original_language_id) }} #{{ $hymn->getNumber($hinario->id) }}</a>
-                            </span>
-                            @if ($loop->first)
-                                @php
-                                    $nextHymn = $hinario->getNextHymn($hymn->id);
-                                @endphp
-                                @if (!empty($nextHymn))
-                                    <a href="{{ url($nextHymn->getSlug()) }}" title="{{ mb_convert_case($nextHymn->getName($nextHymn->original_language_id), MB_CASE_TITLE, 'UTF-8') }}">:: {{ __('hymns.breadcrumbs.next') }} <i class="far fa-arrow-alt-circle-right"></i></a>
+                            <div class="@if ($loop->first) hinario-breadcrumb-bold @else hinario-breadcrumb @endif">
+                                @if ($loop->first)
+                                    @php
+                                        $previousHymn = $hinario->getPreviousHymn($hymn->id);
+                                    @endphp
+                                    @if (!empty($previousHymn))
+                                        <a href="{{ url($previousHymn->getSlug()) }}" title="{{ mb_convert_case($previousHymn->getName($previousHymn->original_language_id), MB_CASE_TITLE, 'UTF-8') }}"><i class="far fa-arrow-alt-circle-left"></i> {{ __('hymns.breadcrumbs.previous') }} :: </a>
+                                    @endif
                                 @endif
-                            @endif
-                        </div>
-                    @endforeach
+                                <span class="hinario-breadcrumb-hinario">
+                                    <a href="{{ url($hinario->getSlug()) }}">{{ $hinario->getName($hinario->original_language_id) }} #{{ $hymn->getNumber($hinario->id) }}</a>
+                                </span>
+                                @if ($loop->first)
+                                    @php
+                                        $nextHymn = $hinario->getNextHymn($hymn->id);
+                                    @endphp
+                                    @if (!empty($nextHymn))
+                                        <a href="{{ url($nextHymn->getSlug()) }}" title="{{ mb_convert_case($nextHymn->getName($nextHymn->original_language_id), MB_CASE_TITLE, 'UTF-8') }}">:: {{ __('hymns.breadcrumbs.next') }} <i class="far fa-arrow-alt-circle-right"></i></a>
+                                    @endif
+                                @endif
+                            </div>
+                        @endforeach
+                    @endif
                 </div>
             </div>
             <div class="row">
@@ -87,7 +89,7 @@
             </div>
 
             <!-- Language selector -->
-            @if (count($hymn->getSecondaryTranslations()) >1)
+            @if (!is_null($hymn) && count($hymn->getSecondaryTranslations()) >1)
             <div class="row">
                 <div class="col-sm-12 col-md-12 text-right flag-image">
                     <ul class="nav-unstyled darklinks flag-image" role="tablist">
@@ -112,17 +114,19 @@
                 <div class="col-sm-6 col-md-6">
                     <div class="tab-content tab-unstyled">
                         <div class="tab-pane fade in active notranslate" id="tab-unstyled-1000">
-                            @if (view()->exists('hymns.patterns.' . $hymn->pattern_id))
-                                @include('hymns.patterns.' . $hymn->pattern_id, [ 'language' => $hymn->original_language_id ])
-                            @else
-                                @include('hymns.patterns.0', [ 'language' => $hymn->original_language_id ])
+                            @if(!is_null($hymn))
+                                @if (view()->exists('hymns.patterns.' . $hymn->pattern_id))
+                                    @include('hymns.patterns.' . $hymn->pattern_id, [ 'language' => $hymn->original_language_id ])
+                                @else
+                                    @include('hymns.patterns.0', [ 'language' => $hymn->original_language_id ])
+                                @endif
+                                @include('hymns.partials.sun_moon_stars')
                             @endif
-                            @include('hymns.partials.sun_moon_stars')
                         </div>
                     </div>
                 </div>
 
-                @if (count($hymn->getSecondaryTranslations()) > 1)
+                @if (!is_null($hymn) && count($hymn->getSecondaryTranslations()) > 1)
 
                     <!-- Other Translations if there are more than one -->
                     <div class="col-sm-6 col-md-6">
@@ -144,20 +148,22 @@
                 @else
 
                     <!-- Other Translations if there is only one -->
-                    @foreach ($hymn->getSecondaryTranslations() as $translation)
-                        <div class="col-sm-6 col-md-6">
-                            <div class="tab-content tab-unstyled">
-                                <div class="tab-pane fade in active" id="tab-unstyled-1000">
-                                    @if (view()->exists('hymns.patterns.' . $translation->hymn->pattern_id))
-                                        @include('hymns.patterns.' . $translation->hymn->pattern_id, [ 'language' => $translation->language_id ])
-                                    @else
-                                        @include('hymns.patterns.0', [ 'language' => $translation->language_id ])
-                                    @endif
+                    @if (!is_null($hymn) )
+                        @foreach ($hymn->getSecondaryTranslations() as $translation)
+                            <div class="col-sm-6 col-md-6">
+                                <div class="tab-content tab-unstyled">
+                                    <div class="tab-pane fade in active" id="tab-unstyled-1000">
+                                        @if (view()->exists('hymns.patterns.' . $translation->hymn->pattern_id))
+                                            @include('hymns.patterns.' . $translation->hymn->pattern_id, [ 'language' => $translation->language_id ])
+                                        @else
+                                            @include('hymns.patterns.0', [ 'language' => $translation->language_id ])
+                                        @endif
+                                    </div>
+                                    @include('hymns.partials.sun_moon_stars')
                                 </div>
-                                @include('hymns.partials.sun_moon_stars')
                             </div>
-                        </div>
-                    @endforeach
+                        @endforeach
+                    @endif
 
                 @endif
             </div> <!-- end lyrics -->
@@ -191,19 +197,26 @@
 <div class="row">
 <div class="vertical-item content-absolute ds rounded overflow_hidden">
 <div class="item-media">
+@if (!is_null($hymn) )
 <img src="{{ url($hymn->receivedBy->getPortrait()) }}">
+@endif
 </div>
 </div>
 <br>
 @include('layouts.partials.other_media', [ 'entity' => $hymn ])
 
+@if (!is_null($hymn) )
 @include('layouts.partials.feedback_form', [ 'entityType' => 'hymn', 'entityId' => $hymn->id ])
+@endif
+
 </div>
 <div class="row">
 <div class="col-sm-8 col-md-12 col-lg-12 padding-top-20 text-center">
 <!-- feedback form -->
 @if (\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::user()->hasRole('superadmin'))
-@include('admin.layouts.partials.add_media_form', [ 'entityType' => 'hymn', 'entityId' => $hymn->id ])
+    @if (!is_null($hymn) )
+        @include('admin.layouts.partials.add_media_form', [ 'entityType' => 'hymn', 'entityId' => $hymn->id ])
+    @endif
 @endif
 </div>
 </div>
