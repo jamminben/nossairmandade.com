@@ -1,14 +1,15 @@
 @extends('layouts.app')
 
 @section('header_title')
-    {{ $person->display_name }}
+    {{ !is_null($person) ? $person->display_name : null }}
 @endsection
 
 @section('page_title')
-    <h2 class="small display_table_cell_md">{{ $person->display_name }}</h2>
+    <h2 class="small display_table_cell_md">{{ !is_null($person) ? $person->display_name : null }}</h2>
 @endsection
 
 @section('content')
+    @if(!is_null($person))
     <div class="col-sm-8 col-md-8 col-lg-8">
         <div class="container">
             <div class="row">
@@ -49,5 +50,6 @@
         </div>
     </div>
     <!-- eof aside sidebar -->
+    @endif
 @endsection
 
