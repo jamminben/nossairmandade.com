@@ -27,7 +27,7 @@
 
 <p>1) Financial need</p>
 
-<p>It costs a minimum of $100 USD per month to keep the site running.  I paid this out of my pocket for the first 10 years with some very generous donations by a small number of people to help along the way.  For the last two years, the fees have been covered by an organization of churches.  That organization has decided to stop funding the site.  Things in my life are such that I cannot really afford to keep paying for it myself.  So, as much as I hate to ask, I need help.  Please visit the Donate page if you are considering helping in this way.</p>
+<p>It costs a minimum of $100 USD per month to keep the site running.  I paid this out of my pocket for the first 10 years with some very generous donations by a small number of people to help along the way.  \The site is now funded by generous donations from various organizations and individuals.  Please visit the Donate page if you are considering helping in this way.</p>
 
 <p>2) Technical help</p>
 
