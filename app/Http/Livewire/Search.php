@@ -26,6 +26,13 @@ class Search extends Component
         $this->receivedBy = request()->get('received_by');
         $this->offeredTo = request()->get('offered_to');
 
+        //LOGGING FOR A SPECIFIC ERROR: getSlug() on null
+        //PLEASE DELETE AFTER ERROR IS FIXED
+        Log::info(__FILE__.":".__LINE__);
+        Log::info('hymn_contains: ' . $this->contains);
+        Log::info('received_by: ' . $this->receivedBy);
+        Log::info('offered_to: ' . $this->offeredTo);
+
 
         //ONLY LOADS ON PAGE LOAD
         //IF YOU WANT THIS TO RUN DYNAMICALLY, MOVE IT TO render() AND MOVE THE PORTION ON THE VIEW TO A COMPONENT
