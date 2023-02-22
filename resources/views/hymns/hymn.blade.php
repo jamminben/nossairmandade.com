@@ -197,7 +197,7 @@
 <div class="row">
 <div class="vertical-item content-absolute ds rounded overflow_hidden">
 <div class="item-media">
-@if (!is_null($hymn) )
+@if ( !is_null($hymn) && !is_null($hymn->receivedBy) )
 <img src="{{ url($hymn->receivedBy->getPortrait()) }}">
 @endif
 </div>

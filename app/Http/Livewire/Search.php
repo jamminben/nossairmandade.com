@@ -28,10 +28,10 @@ class Search extends Component
 
         //LOGGING FOR A SPECIFIC ERROR: getSlug() on null
         //PLEASE DELETE AFTER ERROR IS FIXED
-        Log::info(__FILE__.":".__LINE__);
-        Log::info('hymn_contains: ' . $this->contains);
-        Log::info('received_by: ' . $this->receivedBy);
-        Log::info('offered_to: ' . $this->offeredTo);
+        // Log::info(__FILE__.":".__LINE__);
+        // Log::info('hymn_contains: ' . $this->contains);
+        // Log::info('received_by: ' . $this->receivedBy);
+        // Log::info('offered_to: ' . $this->offeredTo);
 
 
         //ONLY LOADS ON PAGE LOAD
