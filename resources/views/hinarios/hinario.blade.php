@@ -60,6 +60,13 @@
             $sectionName = ''
         @endphp
         @if(!is_null($hinario))
+            @php 
+                Log::info(__FILE__.":".__LINE__);
+                Log::info(Route::current()->parameters); 
+                Log::info(Route::current()->uri); 
+                Log::info(Route::current()->getActionName()); 
+                Log::info($hinario->id);  
+            @endphp
             @foreach ($hinario->hymnHinarios as $hymnHinario)
                 @if ($hinario->displaySections && $hymnHinario->section != $sectionName)
                     <div class="row">
