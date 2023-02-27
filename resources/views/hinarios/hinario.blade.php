@@ -60,13 +60,13 @@
             $sectionName = ''
         @endphp
         @if(!is_null($hinario))
-            @php 
+            {{--  @php 
                 Log::info(__FILE__.":".__LINE__);
                 Log::info(Route::current()->parameters); 
                 Log::info(Route::current()->uri); 
                 Log::info(Route::current()->getActionName()); 
                 Log::info($hinario->id);  
-            @endphp
+            @endphp  --}}
             @foreach ($hinario->hymnHinarios as $hymnHinario)
                 @if ($hinario->displaySections && $hymnHinario->section != $sectionName)
                     <div class="row">
@@ -76,26 +76,30 @@
                         $sectionName = $hymnHinario->section
                     @endphp
                 @endif
-                <div class="hymn-list-name">
-                    <a href="{{ url($hymnHinario->hymn->slug) }}">
-                        {{ $hymnHinario->list_order }}.
-                        @if (strlen($hymnHinario->hymn->name) > 30)
-                            @php
-                                $closestSpace = strpos($hymnHinario->hymn->name, ' ', 23);
-                            @endphp
-                            {!! mb_convert_case(substr_replace($hymnHinario->hymn->name, '<br>', $closestSpace, 0), MB_CASE_TITLE, "UTF-8") !!}
-                        @else
-                            {{ mb_convert_case($hymnHinario->hymn->name, MB_CASE_TITLE, "UTF-8") }}
+                {{--  see issue: https://github.com/jamminben/nossairmandade.com/issues/15  --}}
+                {{--  @php if( is_array($hymnHinario->hymn) ) { dd($hymnHinario); } @endphp  --}}
+                @if( !empty($hymnHinario->hymn) )
+                    <div class="hymn-list-name">
+                        <a href="{{ url($hymnHinario->hymn->slug) }}">
+                            {{ $hymnHinario->list_order }}.
+                            @if (strlen($hymnHinario->hymn->name) > 30)
+                                @php
+                                    $closestSpace = strpos($hymnHinario->hymn->name, ' ', 23);
+                                @endphp
+                                {!! mb_convert_case(substr_replace($hymnHinario->hymn->name, '<br>', $closestSpace, 0), MB_CASE_TITLE, "UTF-8") !!}
+                            @else
+                                {{ mb_convert_case($hymnHinario->hymn->name, MB_CASE_TITLE, "UTF-8") }}
+                            @endif
+                        </a>
+                        @if (\Illuminate\Support\Facades\Auth::check())
+                            <ul class="nav navbar-nav navbar-right add-hymn">
+                                <li class="dropdown">
+                                    @include('layouts.partials.add_hymn_form', [ 'hymn' => $hymnHinario->hymn ])
+                                </li>
+                            </ul>
                         @endif
-                    </a>
-                    @if (\Illuminate\Support\Facades\Auth::check())
-                        <ul class="nav navbar-nav navbar-right add-hymn">
-                            <li class="dropdown">
-                                @include('layouts.partials.add_hymn_form', [ 'hymn' => $hymnHinario->hymn ])
-                            </li>
-                        </ul>
-                    @endif
-                </div>
+                    </div>
+                @endif
             @endforeach
         @endif
     </div>
