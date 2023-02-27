@@ -8,6 +8,7 @@ use App\Models\UserHymnHinario;
 use App\Services\GlobalFunctions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Mpdf\Mpdf;
 
 class UserHinarioController extends Controller
@@ -153,6 +154,9 @@ class UserHinarioController extends Controller
 
     public function showPdf($code)
     {
+        Log::info(__FILE__.":".__LINE__);
+        Log::info("userhinarioId: ". $code);
+
         $html = '';
 
         $hinario = UserHinario::where('code', $code)
