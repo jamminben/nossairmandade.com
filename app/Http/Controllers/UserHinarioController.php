@@ -154,8 +154,6 @@ class UserHinarioController extends Controller
 
     public function showPdf($code)
     {
-        Log::info(__FILE__.":".__LINE__);
-        Log::info("userhinarioId: ". $code);
 
         $html = '';
 

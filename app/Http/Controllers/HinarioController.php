@@ -95,10 +95,6 @@ class HinarioController extends Controller
 
     public function showPdf($hinarioId, $hinarioName)
     {
-        ini_set('max_execution_time', 240);
-        Log::info(__FILE__.":".__LINE__);
-        Log::info("hinarioId: ". $hinarioId);
-
         $html = '';
         $hinario = Hinario::where('id', $hinarioId)
             ->with(
