@@ -5,11 +5,13 @@ use App\Enums\EntityTypes;
 use App\Enums\MediaTypes;
 use App\Services\GlobalFunctions;
 use App\Services\GlobalService;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Hymn extends ModelWithTranslations
 {
-    public $timestamps = false;
+    use HasFactory;
+    // public $timestamps = false;
 
     protected $fillable = [];
 

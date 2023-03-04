@@ -43,6 +43,11 @@ return [
 
     'disks' => [
 
+        'hinario_pdfs' => [
+            'driver' => 'local',
+            'root' => storage_path('app/hinario_pdfs'),
+        ],
+
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app'),

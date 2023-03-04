@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class HymnTranslation extends Model
 {
-    public $timestamps = false;
+    // public $timestamps = false;
 
     protected $fillable = [];
 
