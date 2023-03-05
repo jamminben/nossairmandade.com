@@ -8,6 +8,7 @@ use App\Services\GlobalFunctions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Mpdf\Mpdf;
 
@@ -262,6 +263,10 @@ class Hinario extends ModelWithTranslations
     }
 
     public function cachePdf() {
+
+        Log::info(__FILE__.":".__LINE__);
+        Log::info("hinario id: " . $this->id);
+
         $html = '';
         $hinario = Hinario::where('id', $this->id)
             ->with(

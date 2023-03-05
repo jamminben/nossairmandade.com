@@ -95,9 +95,6 @@ class HinarioController extends Controller
 
     public function showPdf($hinarioId, $hinarioName)
     {
-        Log::info(__FILE__.":".__LINE__);
-        Log::info("hinario id: " . $hinarioId);
-
         $hinario = Hinario::find($hinarioId);
 
         $fileContents = $hinario->getPdf($hinarioId);
