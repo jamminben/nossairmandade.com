@@ -3,11 +3,14 @@ namespace App\Models;
 
 use App\Classes\Stanza;
 use App\Services\GlobalFunctions;
+use App\Traits\VersionableTrait;
 use Illuminate\Database\Eloquent\Model;
 
 class HymnTranslation extends Model
 {
     // public $timestamps = false;
+    // use \Mpociot\Versionable\VersionableTrait;
+    use VersionableTrait;
 
     protected $fillable = [];
 

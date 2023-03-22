@@ -30,3 +30,4 @@ sql
 .vscode
 getmedia.sh
 public/phpinfo.php
+storage/debugbar/
