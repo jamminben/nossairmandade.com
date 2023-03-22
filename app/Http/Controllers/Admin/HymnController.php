@@ -60,6 +60,12 @@ class HymnController extends Controller
         $this->hymnData['hinarios'] = $this->loadHinarios();
         $this->hymnData['languages'] = $this->loadLanguages();
 
+        // dd($this->hymnData);
+        if(0 == $this->hymnData['hymnId']) {
+            $this->hymnData['title'] = 'Create New Hymn';
+        } else {
+            $this->hymnData['title'] = 'Edit Hymn';
+        }
         return view('admin.edit_hymn', $this->hymnData);
     }
 
@@ -80,6 +86,8 @@ class HymnController extends Controller
                 $this->saveHymnAndPrepareVariables($request->all(), $hymn);
             }
         }
+
+        $this->hymnData['title'] = 'Edit Hymn';
 
         return view('admin.edit_hymn', $this->hymnData);
     }
