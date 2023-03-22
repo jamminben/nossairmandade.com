@@ -25,3 +25,8 @@ Homestead.json
 /public/media/
 *.clpprj
 *.csprj
+
+sql
+.vscode
+getmedia.sh
+public/phpinfo.php
