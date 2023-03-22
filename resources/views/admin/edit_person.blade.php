@@ -149,13 +149,14 @@
                                 @if ($feedback->resolved != 0)
                                     Resolved
                                 @else
-                                    <form action="{{ url('admin/enter-hymn?hymn_id=' . $hymnId) }}" method="POST">
+                                    Code broken.52642
+                                    {{--  <form action="{{ url('admin/enter-hymn?hymn_id=' . $hymnId) }}" method="POST">
                                         @csrf
                                         <input type="hidden" name="action" value="feedback">
                                         <input type="hidden" name="feedback_id" value="{{ $feedback->id }}">
                                         <input type="hidden" name="hymnId" value="{{ $hymnId }}">
                                         <button type="submit" name="submit_feedback" class="theme_button color4 min_width_button margin_0">Resolve</button>
-                                    </form>
+                                    </form>  --}}
                                 @endif
                             </td>
                         </tr>

@@ -390,4 +390,11 @@ class HymnController extends Controller
         // feedback
         $this->hymnData['feedback'] = $hymn->feedback;
     }
+
+    public function feedback() {
+
+        $feedbacks = Feedback::all();
+
+        return view('admin.feedback')->with('feedbacks', $feedbacks);
+    }
 }

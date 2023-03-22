@@ -91,7 +91,8 @@ Route::group(['middleware' => ['auth']], function() {
  * Hinarios
  */
 
-Route::get('/hinario/{hinarioId}/{hinarioName?}', 'HinarioController@showPreloaded');
+Route::get('/hinario/{hinarioId}/{hinarioName?}', 'HinarioController@showPreloaded')
+    ->name('get-hinario');
 Route::get('/hinario.php?hid={hinarioId}', 'HinarioController@show');
 
 Route::get('/hinario/{hinarioId}/{hinarioName?}/pdf', 'HinarioController@showPdf');
@@ -119,9 +120,13 @@ Route::group(['middleware' => ['admin'], 'prefix' => 'admin'], function() {
     Route::post('/enter-hymn', 'Admin\HymnController@save');
     Route::get('/load-hymn', 'Admin\HymnController@load');
     Route::post('/edit-hymn', 'Admin\HymnController@save');
+    Route::get('/edit-hymn', 'Admin\HymnController@save')->name('get-edit-hymn');
+
+    Route::get('/feedback', 'Admin\HymnController@feedback')->name('feedback');
 
     Route::get('/edit-person', 'Admin\PersonController@show');
     Route::post('/edit-person', 'Admin\PersonController@save');
+    Route::get('/get-edit-person', 'Admin\PersonController@save')->name('get-edit-person');
 
     Route::get('/move-hymn-files', 'Admin\MediaImportController@showMoveHymns');
     Route::post('/move-hymn-files', 'Admin\MediaImportController@moveHymns');
