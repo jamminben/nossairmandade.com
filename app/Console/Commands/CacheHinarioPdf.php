@@ -46,6 +46,7 @@ class CacheHinarioPdf extends Command
         if ($this->option('all')) {
             // Cache all Hinario models.
             foreach (Hinario::all() as $hinario) {
+                echo "starting hinario " . $hinario->id . "\n";
                 $hinario->return_pdf_content = 0;
                 echo $hinario->getPdf() . "\n";
             }
