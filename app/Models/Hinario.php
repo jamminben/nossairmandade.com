@@ -176,7 +176,11 @@ class Hinario extends ModelWithTranslations
                 }
             }
         }
-        return $time;
+        if(is_null($time)) {
+            return null;
+        } else {
+            return $time->timestamp;
+        }
     }
 
 
@@ -256,6 +260,7 @@ class Hinario extends ModelWithTranslations
             //IF HINARIO HAS BEEN UPDATED, RECACHE IT
             // Log::info(__FILE__.":".__LINE__);
             // Log::info( $lastModified . " " . $this->getLastUpdate() );
+            // dd( $lastModified . " " . $this->getLastUpdate() );
             if ( $lastModified < $this->getLastUpdate()) {
                 return $this->cachePdf();
             } else {
@@ -352,9 +357,10 @@ class Hinario extends ModelWithTranslations
 
                             if ($hasTranslation) {
                                 if (!isset($stanzas2[$x])) {
-                                    echo $x; die(print_r($stanzas2));
+                                    // echo $x; die(print_r($stanzas2));
+                                } else {
+                                    $preparedStanzas2[] = $stanzas2[$x];
                                 }
-                                $preparedStanzas2[] = $stanzas2[$x];
                             }
 
                             // mamae o mamae
@@ -449,6 +455,8 @@ class Hinario extends ModelWithTranslations
                         $pageNumber++;
                     }
                     $totalPageCount ++;
+                    // if($loops > 100) return 'broken';
+                    if($loops > count($stanzas)) break;
                 }
             }
         }
