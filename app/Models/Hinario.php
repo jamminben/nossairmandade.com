@@ -20,6 +20,8 @@ class Hinario extends ModelWithTranslations
 
     protected $fillable = [];
 
+    public $return_pdf_content = true;
+
     public function __construct()
     {
         parent::__construct();
@@ -252,9 +254,14 @@ class Hinario extends ModelWithTranslations
         if($pdf = Storage::disk('hinario_pdfs')->get($this->id)) {
             $lastModified = Storage::disk('hinario_pdfs')->lastModified($this->id);
             //IF HINARIO HAS BEEN UPDATED, RECACHE IT
+            // Log::info(__FILE__.":".__LINE__);
+            // Log::info( $lastModified . " " . $this->getLastUpdate() );
             if ( $lastModified < $this->getLastUpdate()) {
                 return $this->cachePdf();
             } else {
+                if(!$this->return_pdf_content) {
+                    return "pdf is already newer than last hinario modification";
+                }
                 return $pdf;
             }
         } else {
@@ -463,6 +470,9 @@ class Hinario extends ModelWithTranslations
         Storage::put('hinario_pdfs/'.$this->id, $pdfContent);
 
         // $mpdf->Output();
+        if(!$this->return_pdf_content) {
+            return "cached " . $this->id;
+        }
         return $pdfContent;
     }
 

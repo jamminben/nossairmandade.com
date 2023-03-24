@@ -22,6 +22,24 @@ class Person extends ModelWithTranslations
         $this->entityName = 'person';
     }
 
+    public function getPortraitImage()
+    {
+        foreach ($this->personImages as $personImage) {
+            if ($personImage->is_portrait == 1) {
+                // if (getUrlExists(url($personImage->image->path))) {
+                //     return $personImage->image->path;
+                // } else {
+                    if(file_exists( public_path($personImage->image->path) )) {
+                        return public_path($personImage->image->path);
+                    } else {
+                        return public_path(self::DEFAULT_PORTRAIT_PATH);
+                    }
+                // }
+            }
+        }
+        return public_path(self::DEFAULT_PORTRAIT_PATH);
+    }
+
     public function getPortrait()
     {
         foreach ($this->personImages as $personImage) {

@@ -11,7 +11,7 @@
 <br>
 <br>
 <div class="center">
-    <img src="{{ url('/images/print/pdf_logo.jpg') }}" width="80%" max-height="80%">
+    <img src="{{ public_path('/images/print/pdf_logo.jpg') }}" width="80%" max-height="80%">
     <br>
     <br>
     <br>
