@@ -14,7 +14,15 @@
 @endsection
 
 @section('content')
+
+    
+
     <div class="col-sm-7 col-md-7 col-lg-7">
+
+        <div>
+            To add hymns to a hinario, go to the hymn page, and click the dropdown next to the hymn title.  Then click "Add to personal hinario".
+        </div>
+
         @foreach ($hinario->hymnHinarios as $hymnHinario)
             <div class="hymn-list-name">
                 <a href="{{ url($hymnHinario->hymn->getSlug()) }}" style="padding-right: 60px;">
