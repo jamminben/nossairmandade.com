@@ -36,6 +36,11 @@ class HinarioController extends Controller
         $this->testStanza(1, 534);
     }
 
+    public function testStanza4() {
+        // A Meu Pai Peço Firmeza
+        $this->testStanza(1, 5);
+    }
+
     public function testStanza($hinarioId, $hymnId) {
 
         $mpdf = new Mpdf(['mode' => 'utf-8', 'format' => [139, 216]]);
