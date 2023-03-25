@@ -166,6 +166,17 @@ class Hinario extends ModelWithTranslations
 
     public function getLastUpdate() {
         $time = $this->updated_at;
+        //@todo
+        // $hinario->image_path
+        // I'M NOT SURE HOW THE image_path IS SAVED, SO DON'T KNOW IF WE NEED public_path(), ETC
+        if( $this->receivedBy ) {
+            $file_updated_at = \Carbon\Carbon::createFromTimestamp(
+                filemtime($this->receivedBy->getPortraitImage())
+            );
+            if($file_updated_at > $time) {
+                $time = $file_updated_at;
+            }
+        }
         foreach($this->refresh()->hymns as $hymn) {
             if($hymn->updated_at > $time) {
                 $time = $hymn->updated_at;
