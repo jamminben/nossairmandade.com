@@ -167,7 +167,7 @@ class Hinario extends ModelWithTranslations
     public function getLastUpdate() {
         $time = $this->updated_at;
         //@todo
-        // $hinario->image_path
+        // $this->image_path
         // I'M NOT SURE HOW THE image_path IS SAVED, SO DON'T KNOW IF WE NEED public_path(), ETC
         if( $this->receivedBy ) {
             $file_updated_at = \Carbon\Carbon::createFromTimestamp(
@@ -285,13 +285,154 @@ class Hinario extends ModelWithTranslations
         }
     }
 
+
+
+    public function writeStanza($mpdf, $stanzas, $loops = 0) {
+
+        $loops++;
+        $lineCount = 0;
+        $preparedStanzas = [];
+        $preparedStanzas2 = [];
+
+        // Walk through remaining stanzas checking to see it there's room to add them
+        for ($x = 0; $x < count($stanzas); $x++) {
+
+            // if there is room for the new stanza, add it
+
+            // dd($stanzas[$x]->getLines());
+            // dd(count($stanzas[$x]->getLines()));
+
+            if ($lineCount + count($stanzas[$x]->getLines()) <= 29) {
+                $preparedStanzas[] = $stanzas[$x];
+                $lineCount += count($stanzas[$x]->getLines());
+                if ($x < (count($stanzas)-1)) {
+                    $lineCount++;
+                }
+
+                if ($this->hasTranslation) {
+                    if (!isset($this->stanzas2[$x])) {
+                        // echo $x; die(print_r($this->stanzas2));
+                    } else {
+                        $preparedStanzas2[] = $this->stanzas2[$x];
+                    }
+                }
+
+                // mamae o mamae
+                if (count($preparedStanzas) == 4 && $this->hymn->pattern_id == 46
+                ) {
+                    $lineCount = 30;
+                    $x = 1000;
+                }
+
+                // Joao Pereira #43
+                if ($this->hymn->pattern_id == 52 && count($preparedStanzas) == 5) {
+                    $lineCount = 30;
+                    $x = 1000;
+                }
+
+                // hymn patterns that require starting each page on an even number
+                if (in_array($this->hymn->pattern_id, [48, 52]) && (count($preparedStanzas) % 4 == 0)) {
+                    $lineCount = 30;
+                    $x = 1000;
+                }
+
+            } else {
+                $x = 1000;
+                $lineCount = 1000;
+            }
+
+        }
+
+        // remove the prepared stanzas from the list
+        array_splice($stanzas, 0, count($preparedStanzas));
+        if ($this->hasTranslation) {
+            array_splice($this->stanzas2, 0, count($preparedStanzas2));
+        }
+
+        // translated page
+        if (count($preparedStanzas2) > 0) {
+
+            if ($this->pageNumber == 1) {
+                $mpdf->WriteHTML(view('hinarios.print.hymn_header', ['hymn' => $this->hymn, 'hinario' => $this->hinario, 'language' => GlobalFunctions::getCurrentLanguage(), 'pageCount' => $this->totalPageCount])->render());
+                $this->html .= view('hinarios.print.hymn_header', ['hymn' => $this->hymn, 'hinario' => $this->hinario, 'language' => GlobalFunctions::getCurrentLanguage(), 'pageCount' => $this->totalPageCount])->render();
+            } else {
+                $mpdf->WriteHTML(view('hinarios.print.hymn_header_continued', ['hymn' => $this->hymn, 'hinario' => $this->hinario, 'language' => GlobalFunctions::getCurrentLanguage(), 'pageCount' => $this->totalPageCount])->render());
+                $this->html .= view('hinarios.print.hymn_header_continued', ['hymn' => $this->hymn, 'hinario' => $this->hinario, 'language' => GlobalFunctions::getCurrentLanguage(), 'pageCount' => $this->totalPageCount])->render();
+            }
+
+            if (view()->exists('hymns.patterns.print.' . $this->hymn->pattern_id)) {
+                $mpdf->WriteHTML(view('hymns.patterns.print.' . $this->hymn->pattern_id, [ 'stanzas' => $preparedStanzas2, 'pageNumber' => $this->pageNumber ])->render());
+                $this->html .= view('hymns.patterns.print.' . $this->hymn->pattern_id, [ 'stanzas' => $preparedStanzas2, 'pageNumber' => $this->pageNumber ])->render();
+            } else {
+                $mpdf->WriteHTML(view('hymns.patterns.print.0', [ 'stanzas' => $preparedStanzas2, 'pageNumber' => $this->pageNumber ])->render());
+                $this->html .= view('hymns.patterns.print.0', [ 'stanzas' => $preparedStanzas2, 'pageNumber' => $this->pageNumber ])->render();
+            }
+
+            if (count($this->stanzas2) == 0) {
+                $mpdf->WriteHTML(view('hinarios.print.hymn_footer', ['hymn' => $this->hymn])->render());
+                $this->html .= view('hinarios.print.hymn_footer', ['hymn' => $this->hymn])->render();
+            } else {
+                $mpdf->WriteHTML(view('hinarios.print.hymn_continued', ['hymn' => $this->hymn])->render());
+                $this->html .= view('hinarios.print.hymn_continued', ['hymn' => $this->hymn])->render();
+            }
+
+            $this->totalPageCount++;
+        }
+
+        // page header - original language
+        if ($this->pageNumber == 1) {
+            $mpdf->WriteHTML(view('hinarios.print.hymn_header', ['hymn' => $this->hymn, 'hinario' => $this->hinario, 'language' => $this->hinario->original_language_id, 'pageCount' => $this->totalPageCount ])->render());
+            $this->html .= view('hinarios.print.hymn_header', ['hymn' => $this->hymn, 'hinario' => $this->hinario, 'language' => $this->hinario->original_language_id, 'pageCount' => $this->totalPageCount])->render();
+        } else {
+            $mpdf->WriteHTML(view('hinarios.print.hymn_header_continued', ['hymn' => $this->hymn, 'hinario' => $this->hinario, 'language' => $this->hinario->original_language_id, 'pageCount' => $this->totalPageCount])->render());
+            $this->html .= view('hinarios.print.hymn_header_continued', ['hymn' => $this->hymn, 'hinario' => $this->hinario, 'language' => $this->hinario->original_language_id, 'pageCount' => $this->totalPageCount])->render();
+        }
+
+        // first page
+        if (view()->exists('hymns.patterns.print.' . $this->hymn->pattern_id)) {
+            $mpdf->WriteHTML(view('hymns.patterns.print.' . $this->hymn->pattern_id, [ 'stanzas' => $preparedStanzas, 'pageNumber' => $this->pageNumber ])->render());
+            $this->html .= view('hymns.patterns.print.' . $this->hymn->pattern_id, [ 'stanzas' => $preparedStanzas, 'pageNumber' => $this->pageNumber ])->render();
+        } else {
+            $mpdf->WriteHTML(view('hymns.patterns.print.0', [ 'stanzas' => $preparedStanzas, 'pageNumber' => $this->pageNumber ])->render());
+            $this->html .= view('hymns.patterns.print.0', [ 'stanzas' => $preparedStanzas, 'pageNumber' => $this->pageNumber ])->render();
+        }
+
+        if (count($stanzas) == 0) {
+            $mpdf->WriteHTML(view('hinarios.print.hymn_footer', ['hymn' => $this->hymn])->render());
+            $this->html .= view('hinarios.print.hymn_footer', ['hymn' => $this->hymn])->render();
+        } else {
+            $mpdf->WriteHTML(view('hinarios.print.hymn_continued', ['hymn' => $this->hymn])->render());
+            $this->html .= view('hinarios.print.hymn_continued', ['hymn' => $this->hymn])->render();
+        }
+
+        if (count($stanzas) > 0) {
+            $this->pageNumber++;
+        }
+        $this->totalPageCount ++;
+        // if($loops > 100) return var_export($stanzas, 1); //return 'broken';
+        
+        if($loops > count($stanzas)) return;
+        $this->writeStanza($mpdf, $stanzas, $loops);
+        
+
+    }
+
+    public $pageNumber;
+    public $totalPageCount;
+    public $hasTranslation;
+    public $hymn;
+    public $hinario;
+    public $html;
+    public $stanzas2;
+
+
     public function cachePdf() {
 
         Log::info(__FILE__.":".__LINE__);
         Log::info("hinario id: " . $this->id);
 
-        $html = '';
-        $hinario = Hinario::where('id', $this->id)
+        $this->html = '';
+        $this->hinario = Hinario::where('id', $this->id)
             ->with(
                 'translations',
                 'sections',
@@ -306,168 +447,51 @@ class Hinario extends ModelWithTranslations
             )
             ->first();
 
-        $sections = $hinario->getSections();
+        $sections = $this->hinario->getSections();
 
-        $hinarioHasTranslations = $hinario->hasTranslationsForLanguage(GlobalFunctions::getCurrentLanguage());
+        $this->hinarioHasTranslations = $this->hinario->hasTranslationsForLanguage(GlobalFunctions::getCurrentLanguage());
 
         $mpdf = new Mpdf(['mode' => 'utf-8', 'format' => [139, 216]]);
 
-        $mpdf->WriteHTML(view('hinarios.print.title_page', [ 'hinario' => $hinario ])->render());
-        $html .= view('hinarios.print.title_page', [ 'hinario' => $hinario ])->render();
-        $totalPageCount = 2;
+        $mpdf->WriteHTML(view('hinarios.print.title_page', [ 'hinario' => $this->hinario ])->render());
+        $this->html .= view('hinarios.print.title_page', [ 'hinario' => $this->hinario ])->render();
+        $this->totalPageCount = 2;
 
         $mpdf->setFooter('{PAGENO}');
 
         foreach ($sections as $section) {
             if (count($sections) > 1) {
                 $mpdf->WriteHTML(view('hinarios.print.section_page', ['section' => $section])->render());
-                $html .= view('hinarios.print.section_page', ['section' => $section])->render();
-                $totalPageCount++;
+                $this->html .= view('hinarios.print.section_page', ['section' => $section])->render();
+                $this->totalPageCount++;
             }
 
-            foreach ($hinario->getHymnsForSection($section->section_number) as $hymn) {
+            foreach ($this->hinario->getHymnsForSection($section->section_number) as $this->hymn) {
 
-                $stanzas = $hymn->stanzas($hymn->original_lanaguage_id);
-                if ($hymn->original_language_id != GlobalFunctions::getCurrentLanguage()) {
-                    $stanzas2 = $hymn->stanzas(GlobalFunctions::getCurrentLanguage());
-                    if (!empty($stanzas2)) {
-                        $hasTranslation = true;
+                $stanzas = $this->hymn->stanzas($this->hymn->original_lanaguage_id);
+                if ($this->hymn->original_language_id != GlobalFunctions::getCurrentLanguage()) {
+                    $this->stanzas2 = $this->hymn->stanzas(GlobalFunctions::getCurrentLanguage());
+                    if (!empty($this->stanzas2)) {
+                        $this->hasTranslation = true;
                     } else {
-                        $hasTranslation = false;
+                        $this->hasTranslation = false;
                     }
                 } else {
-                    $stanzas2 = [];
-                    $hasTranslation = false;
+                    $this->stanzas2 = [];
+                    $this->hasTranslation = false;
                 }
 
-                if (($totalPageCount % 2) != 0 && count($stanzas2) > 0) {
+                if (($this->totalPageCount % 2) != 0 && count($this->stanzas2) > 0) {
                     $mpdf->WriteHTML(view('hinarios.print.blank_page')->render());
-                    $totalPageCount++;
+                    $this->totalPageCount++;
                 }
 
-                $pageNumber = 1;
-                $loops = 0;
+                $this->pageNumber = 1;
+                // $loops = 0;
 
                 // while we still have stanzas
-                while (count($stanzas) > 0) {
-                    $loops++;
-                    $lineCount = 0;
-                    $preparedStanzas = [];
-                    $preparedStanzas2 = [];
-
-                    // Walk through remaining stanzas checking to see it there's room to add them
-                    for ($x = 0; $x < count($stanzas); $x++) {
-
-                        // if there is room for the new stanza, add it
-                        if ($lineCount + count($stanzas[$x]->getLines()) <= 29) {
-                            $preparedStanzas[] = $stanzas[$x];
-                            $lineCount += count($stanzas[$x]->getLines());
-                            if ($x < (count($stanzas)-1)) {
-                                $lineCount++;
-                            }
-
-                            if ($hasTranslation) {
-                                if (!isset($stanzas2[$x])) {
-                                    // echo $x; die(print_r($stanzas2));
-                                } else {
-                                    $preparedStanzas2[] = $stanzas2[$x];
-                                }
-                            }
-
-                            // mamae o mamae
-                            if (count($preparedStanzas) == 4 && $hymn->pattern_id == 46
-                            ) {
-                                $lineCount = 30;
-                                $x = 1000;
-                            }
-
-                            // Joao Pereira #43
-                            if ($hymn->pattern_id == 52 && count($preparedStanzas) == 5) {
-                                $lineCount = 30;
-                                $x = 1000;
-                            }
-
-                            // hymn patterns that require starting each page on an even number
-                            if (in_array($hymn->pattern_id, [48, 52]) && (count($preparedStanzas) % 4 == 0)) {
-                                $lineCount = 30;
-                                $x = 1000;
-                            }
-
-                        } else {
-                            $x = 1000;
-                            $lineCount = 1000;
-                        }
-
-                    }
-
-                    // remove the prepared stanzas from the list
-                    array_splice($stanzas, 0, count($preparedStanzas));
-                    if ($hasTranslation) {
-                        array_splice($stanzas2, 0, count($preparedStanzas2));
-                    }
-
-                    // translated page
-                    if (count($preparedStanzas2) > 0) {
-
-                        if ($pageNumber == 1) {
-                            $mpdf->WriteHTML(view('hinarios.print.hymn_header', ['hymn' => $hymn, 'hinario' => $hinario, 'language' => GlobalFunctions::getCurrentLanguage(), 'pageCount' => $totalPageCount])->render());
-                            $html .= view('hinarios.print.hymn_header', ['hymn' => $hymn, 'hinario' => $hinario, 'language' => GlobalFunctions::getCurrentLanguage(), 'pageCount' => $totalPageCount])->render();
-                        } else {
-                            $mpdf->WriteHTML(view('hinarios.print.hymn_header_continued', ['hymn' => $hymn, 'hinario' => $hinario, 'language' => GlobalFunctions::getCurrentLanguage(), 'pageCount' => $totalPageCount])->render());
-                            $html .= view('hinarios.print.hymn_header_continued', ['hymn' => $hymn, 'hinario' => $hinario, 'language' => GlobalFunctions::getCurrentLanguage(), 'pageCount' => $totalPageCount])->render();
-                        }
-
-                        if (view()->exists('hymns.patterns.print.' . $hymn->pattern_id)) {
-                            $mpdf->WriteHTML(view('hymns.patterns.print.' . $hymn->pattern_id, [ 'stanzas' => $preparedStanzas2, 'pageNumber' => $pageNumber ])->render());
-                            $html .= view('hymns.patterns.print.' . $hymn->pattern_id, [ 'stanzas' => $preparedStanzas2, 'pageNumber' => $pageNumber ])->render();
-                        } else {
-                            $mpdf->WriteHTML(view('hymns.patterns.print.0', [ 'stanzas' => $preparedStanzas2, 'pageNumber' => $pageNumber ])->render());
-                            $html .= view('hymns.patterns.print.0', [ 'stanzas' => $preparedStanzas2, 'pageNumber' => $pageNumber ])->render();
-                        }
-
-                        if (count($stanzas2) == 0) {
-                            $mpdf->WriteHTML(view('hinarios.print.hymn_footer', ['hymn' => $hymn])->render());
-                            $html .= view('hinarios.print.hymn_footer', ['hymn' => $hymn])->render();
-                        } else {
-                            $mpdf->WriteHTML(view('hinarios.print.hymn_continued', ['hymn' => $hymn])->render());
-                            $html .= view('hinarios.print.hymn_continued', ['hymn' => $hymn])->render();
-                        }
-
-                        $totalPageCount++;
-                    }
-
-                    // page header - original language
-                    if ($pageNumber == 1) {
-                        $mpdf->WriteHTML(view('hinarios.print.hymn_header', ['hymn' => $hymn, 'hinario' => $hinario, 'language' => $hinario->original_language_id, 'pageCount' => $totalPageCount ])->render());
-                        $html .= view('hinarios.print.hymn_header', ['hymn' => $hymn, 'hinario' => $hinario, 'language' => $hinario->original_language_id, 'pageCount' => $totalPageCount])->render();
-                    } else {
-                        $mpdf->WriteHTML(view('hinarios.print.hymn_header_continued', ['hymn' => $hymn, 'hinario' => $hinario, 'language' => $hinario->original_language_id, 'pageCount' => $totalPageCount])->render());
-                        $html .= view('hinarios.print.hymn_header_continued', ['hymn' => $hymn, 'hinario' => $hinario, 'language' => $hinario->original_language_id, 'pageCount' => $totalPageCount])->render();
-                    }
-
-                    // first page
-                    if (view()->exists('hymns.patterns.print.' . $hymn->pattern_id)) {
-                        $mpdf->WriteHTML(view('hymns.patterns.print.' . $hymn->pattern_id, [ 'stanzas' => $preparedStanzas, 'pageNumber' => $pageNumber ])->render());
-                        $html .= view('hymns.patterns.print.' . $hymn->pattern_id, [ 'stanzas' => $preparedStanzas, 'pageNumber' => $pageNumber ])->render();
-                    } else {
-                        $mpdf->WriteHTML(view('hymns.patterns.print.0', [ 'stanzas' => $preparedStanzas, 'pageNumber' => $pageNumber ])->render());
-                        $html .= view('hymns.patterns.print.0', [ 'stanzas' => $preparedStanzas, 'pageNumber' => $pageNumber ])->render();
-                    }
-
-                    if (count($stanzas) == 0) {
-                        $mpdf->WriteHTML(view('hinarios.print.hymn_footer', ['hymn' => $hymn])->render());
-                        $html .= view('hinarios.print.hymn_footer', ['hymn' => $hymn])->render();
-                    } else {
-                        $mpdf->WriteHTML(view('hinarios.print.hymn_continued', ['hymn' => $hymn])->render());
-                        $html .= view('hinarios.print.hymn_continued', ['hymn' => $hymn])->render();
-                    }
-
-                    if (count($stanzas) > 0) {
-                        $pageNumber++;
-                    }
-                    $totalPageCount ++;
-                    // if($loops > 100) return 'broken';
-                    if($loops > count($stanzas)) break;
+                if (count($stanzas) > 0) {
+                    $this->writeStanza($mpdf, $stanzas);
                 }
             }
         }
@@ -480,7 +504,7 @@ class Hinario extends ModelWithTranslations
 
         $mpdf->setFooter('');
         $mpdf->WriteHTML(view('hinarios.print.final_page', [ 'printDate' => $printDate ])->render());
-        $html .= view('hinarios.print.final_page')->render();
+        $this->html .= view('hinarios.print.final_page')->render();
 
 
         

@@ -1,8 +1,10 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Classes\Stanza;
 use App\Enums\Languages;
 use App\Models\Hinario;
+use App\Models\Hymn;
 use App\Models\UserHinario;
 use App\Services\GlobalFunctions;
 use App\Services\HinarioService;
@@ -16,6 +18,47 @@ class HinarioController extends Controller
 
     public function __construct(HinarioService $hinarioService) {
         $this->hinarioService = $hinarioService;
+    }
+
+    public function testStanza1() {
+        //Dying Well
+        $this->testStanza(44, 4464);
+    }
+
+    public function testStanza2() {
+        // A Meu Pai Peço Firmeza
+        $this->testStanza(1, 2);
+    }
+
+    
+    public function testStanza3() {
+        // //EU PEDI E TIVE O TOQUE
+        $this->testStanza(1, 534);
+    }
+
+    public function testStanza($hinarioId, $hymnId) {
+
+        $mpdf = new Mpdf(['mode' => 'utf-8', 'format' => [139, 216]]);
+
+        $hinario = Hinario::find($hinarioId);
+
+        $hinario->hymn = Hymn::find($hymnId);
+        $hinario->hinario = $hinario;
+
+        $stanzas = $hinario->hymn->stanzas($hinario->hymn->original_lanaguage_id);
+
+        $hinario->writeStanza($mpdf, $stanzas);
+
+        $fileContents = $mpdf->output();
+
+        $filename = json_decode($hinario->preloaded_json)->name . ".pdf";
+        $headers = [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'filename="'.$filename.'"',
+        ];
+
+        return response($fileContents, 200, $headers);
+
     }
 
     public function show($hinarioId, $hinarioName = null)

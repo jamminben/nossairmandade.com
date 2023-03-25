@@ -17,9 +17,11 @@ class HymnTranslation extends Model
     public function getStanzas()
     {
         if (strstr($this->lyrics, "\n")) {
-            $lyrics = preg_replace("/(\r?\n){2,}/", "\n\n", $this->lyrics);
+            //ADDED AN s+ AT THE BEGINNING FOR LINES THAT ACCIDENTALLY HAVE SPACES
+            $lyrics = preg_replace("/(\s+\r?\n){2,}/", "\n\n", $this->lyrics);
             $stanzas = explode("\n\n", $lyrics);
         } else {
+            $lyrics = str_replace(" \r", "\n", $this->lyrics);
             $lyrics = str_replace("\r", "\n", $this->lyrics);
             $lyrics = str_replace("\n \n", "\n\n", $lyrics);
             $stanzas = explode("\n\n", $lyrics);

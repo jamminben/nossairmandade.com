@@ -91,6 +91,10 @@ Route::group(['middleware' => ['auth']], function() {
  * Hinarios
  */
 
+Route::get('/test/stanza1', 'HinarioController@testStanza1');
+Route::get('/test/stanza2', 'HinarioController@testStanza2');
+Route::get('/test/stanza3', 'HinarioController@testStanza3');
+
 Route::get('/hinario/{hinarioId}/{hinarioName?}', 'HinarioController@showPreloaded')
     ->name('get-hinario');
 Route::get('/hinario.php?hid={hinarioId}', 'HinarioController@show');
