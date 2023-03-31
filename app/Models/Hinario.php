@@ -28,6 +28,11 @@ class Hinario extends ModelWithTranslations
         $this->entityName = 'hinario';
     }
 
+    public function owners()
+    {
+        return $this->belongsToMany(User::class, 'hinario_owners');
+    }
+
     public function getOtherMedia()
     {
         $media = [];

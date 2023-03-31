@@ -3,6 +3,20 @@
         <li>
             <a href="{{ url('') }}">@lang('nav.home')</a>
         </li>
+        @if(auth()->user() && auth()->user()->owned_hinarios()->exists())
+        <li>
+            <a href="{{ route('get-enter-hymn') }}" >Edit Hymns</a>
+            {{--  <a href="{{ url('admin/enter-hymn') }}" >Edit Hymns</a>  --}}
+            <ul>
+                <li>
+                    <a href="{{ route('get-enter-hymn') }}">Enter New Hymn</a>
+                </li>
+                <li>
+                    <a href="{{ url('admin/load-hymn') }}">Edit Hymn</a>
+                </li>
+            </ul>
+        </li>
+        @endif
         <li>
             <a href="{{ url('about') }}">{{ __('nav.info') }}</a>
             <ul>

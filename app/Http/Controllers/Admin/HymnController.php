@@ -94,7 +94,9 @@ class HymnController extends Controller
 
     public function load()
     {
-        return view('admin.load_hymn');
+        $hinarios = auth()->user()->ownedHinarios()->with('hymns')->get();
+        return view('admin.load_hymn')
+            ->with(compact('hinarios'));
     }
 
     private function loadPersons()
@@ -121,7 +123,11 @@ class HymnController extends Controller
 
     private function loadHinarios()
     {
-        $hinariosObjects = Hinario::whereIn('type_id', [ HinarioTypes::LOCAL, HinarioTypes::INDIVIDUAL ])->get();
+        // $hinariosObjects = Hinario::whereIn('type_id', [ HinarioTypes::LOCAL, HinarioTypes::INDIVIDUAL ])->get();
+
+        $hinariosObjects = auth()->user()->ownedHinarios()
+            ->whereIn('type_id', [ HinarioTypes::LOCAL, HinarioTypes::INDIVIDUAL ])
+            ->get();
 
         $hinarios = [];
         foreach ($hinariosObjects as $hinario) {

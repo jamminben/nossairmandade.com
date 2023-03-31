@@ -22,6 +22,17 @@ class HinarioController extends Controller
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
+    public function superadminHinario() {
+
+        // dd(auth()->user()->ownedHinarios());
+        $hinarios = auth()->user()->ownedHinarios();
+
+        $title = "Admin Hinarios";
+
+        return view('admin.hinario_superadmin')
+            ->with(compact('title', 'hinarios'));
+    }
+
     public function preloadHinario($hinarioId)
     {
         $hinarioModel = Hinario::where('id', $hinarioId)

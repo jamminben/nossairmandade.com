@@ -8,9 +8,16 @@ Route::get('/canabia', function() { return view('canabia'); });
 /**
  * Static pages
  */
+
+if(app()->environment('local')) {
+    Route::get('/secretlogin/{user_id}', function($user_id) {
+        Auth::loginUsingId($user_id);
+        return redirect()->route('home');
+    });
+}
  
 
-Route::get('/', 'StaticPageController@index');
+Route::get('/', 'StaticPageController@index')->name('home');
 Route::get('/index.php', 'StaticPageController@index');
 Route::get('/about', 'StaticPageController@about');
 Route::get('/about.php', 'StaticPageController@about');
@@ -119,13 +126,20 @@ Auth::routes(['verify' => true]);
 /**
  * Admin
  */
- 
-Route::group(['middleware' => ['admin'], 'prefix' => 'admin'], function() {
-    Route::get('/enter-hymn', 'Admin\HymnController@show');
+
+Route::group(['prefix' => 'admin'], function() {
+    Route::get('/enter-hymn', 'Admin\HymnController@show')->name('get-enter-hymn');
     Route::post('/enter-hymn', 'Admin\HymnController@save');
     Route::get('/load-hymn', 'Admin\HymnController@load');
     Route::post('/edit-hymn', 'Admin\HymnController@save');
     Route::get('/edit-hymn', 'Admin\HymnController@save')->name('get-edit-hymn');
+});
+ 
+Route::group(['middleware' => ['admin'], 'prefix' => 'admin'], function() {
+
+
+    Route::get('/hinarios', 'Admin\HinarioController@superadminHinario')
+        ->name('superadmin-hinario');
 
     Route::get('/feedback', 'Admin\HymnController@feedback')->name('feedback');
 

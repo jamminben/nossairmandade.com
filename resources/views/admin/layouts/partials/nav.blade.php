@@ -15,7 +15,7 @@
             </ul>
         </li>
         <li>
-            <a href="{{ url('admin/edit-hinario') }}">Hinario</a>
+            <a href="{{ route('superadmin-hinario') }}">Hinario</a>
         </li>
         <li>
             <a href="{{ url('admin/edit-person') }}">Person</a>

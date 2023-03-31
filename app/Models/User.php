@@ -40,4 +40,21 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
     ];
 
+    public function ownedHinarios()
+    {
+        if ($this->hasRole('superadmin')) {
+            return Hinario::orderByRaw("JSON_EXTRACT(preloaded_json, '$.name')");
+        } else {
+            return $this->owned_hinarios();
+        }
+    }
+
+    public function owned_hinarios()
+    {
+        return $this->belongsToMany(Hinario::class, 'hinario_owners')
+            ->orderByRaw("JSON_EXTRACT(preloaded_json, '$.name')");
+    }
+
+
+
 }
