@@ -127,7 +127,7 @@ Auth::routes(['verify' => true]);
  * Admin
  */
 
-Route::group(['prefix' => 'admin'], function() {
+Route::group(['middleware'=>'auth', 'prefix' => 'admin'], function() {
     Route::get('/enter-hymn', 'Admin\HymnController@show')->name('get-enter-hymn');
     Route::post('/enter-hymn', 'Admin\HymnController@save');
     Route::get('/load-hymn', 'Admin\HymnController@load');

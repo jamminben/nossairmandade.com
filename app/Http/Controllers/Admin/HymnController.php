@@ -71,6 +71,19 @@ class HymnController extends Controller
 
     public function save(Request $request)
     {
+        //MAKE SURE USER HAS ACCESS TO THE HINARIO:
+        $canHinarios = auth()->user()->ownedHinarios()->pluck('id')->toArray();
+        $hinarioId = $request->get('hinario');
+        if(!in_array($hinarioId, $canHinarios)) {
+            return ['error'=>'unauthorized'];
+        }
+        if($request->get('hymnId') > 0) {
+            $hinarioId = Hymn::find( $request->get('hymnId') )->hinarios->first()->id;
+            if(!in_array($hinarioId, $canHinarios)) {
+                return ['error'=>'unauthorized'];
+            }
+        } 
+
         if ($request->get('hymnId') == 0) {
             $hymn = new Hymn();
             $this->saveHymnAndPrepareVariables($request->all(), $hymn);
