@@ -1,11 +1,11 @@
 @extends('admin.layouts.app')
 
 @section('header_title')
-    Edit Hymn
+    {{ $title }}
 @endsection
 
 @section('page_title')
-    <h2 class="small display_table_cell_md">Edit Hymn</h2>
+    <h2 class="small display_table_cell_md">{{ $title }}</h2>
 @endsection
 
 @section('content')

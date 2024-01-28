@@ -8,9 +8,14 @@ class HinarioService
 {
     public function preloadHinario($hinarioId)
     {
+        
         $hinarioModel = Hinario::where('id', $hinarioId)
             ->with('translations', 'sections', 'hymns', 'hymnHinarios', 'hymnHinarios.hinario', 'receivedBy', 'hymns.mediaFiles', 'hymns.translations', 'hymns.hymnHinarios')
             ->first();
+
+        if(is_null($hinarioModel)) {
+            return;
+        }
 
         $recordingSourceModels = $hinarioModel->getRecordingSources();
 

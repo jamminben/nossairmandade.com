@@ -8,9 +8,16 @@ Route::get('/canabia', function() { return view('canabia'); });
 /**
  * Static pages
  */
+
+if(app()->environment('local')) {
+    Route::get('/secretlogin/{user_id}', function($user_id) {
+        Auth::loginUsingId($user_id);
+        return redirect()->route('home');
+    });
+}
  
 
-Route::get('/', 'StaticPageController@index');
+Route::get('/', 'StaticPageController@index')->name('home');
 Route::get('/index.php', 'StaticPageController@index');
 Route::get('/about', 'StaticPageController@about');
 Route::get('/about.php', 'StaticPageController@about');
@@ -91,7 +98,13 @@ Route::group(['middleware' => ['auth']], function() {
  * Hinarios
  */
 
-Route::get('/hinario/{hinarioId}/{hinarioName?}', 'HinarioController@showPreloaded');
+Route::get('/test/stanza1', 'HinarioController@testStanza1');
+Route::get('/test/stanza2', 'HinarioController@testStanza2');
+Route::get('/test/stanza3', 'HinarioController@testStanza3');
+Route::get('/test/stanza4', 'HinarioController@testStanza4');
+
+Route::get('/hinario/{hinarioId}/{hinarioName?}', 'HinarioController@showPreloaded')
+    ->name('get-hinario');
 Route::get('/hinario.php?hid={hinarioId}', 'HinarioController@show');
 
 Route::get('/hinario/{hinarioId}/{hinarioName?}/pdf', 'HinarioController@showPdf');
@@ -113,15 +126,26 @@ Auth::routes(['verify' => true]);
 /**
  * Admin
  */
- 
-Route::group(['middleware' => ['admin'], 'prefix' => 'admin'], function() {
-    Route::get('/enter-hymn', 'Admin\HymnController@show');
+
+Route::group(['middleware'=>'auth', 'prefix' => 'admin'], function() {
+    Route::get('/enter-hymn', 'Admin\HymnController@show')->name('get-enter-hymn');
     Route::post('/enter-hymn', 'Admin\HymnController@save');
     Route::get('/load-hymn', 'Admin\HymnController@load');
     Route::post('/edit-hymn', 'Admin\HymnController@save');
+    Route::get('/edit-hymn', 'Admin\HymnController@save')->name('get-edit-hymn');
+});
+ 
+Route::group(['middleware' => ['admin'], 'prefix' => 'admin'], function() {
+
+
+    Route::get('/hinarios', 'Admin\HinarioController@superadminHinario')
+        ->name('superadmin-hinario');
+
+    Route::get('/feedback', 'Admin\HymnController@feedback')->name('feedback');
 
     Route::get('/edit-person', 'Admin\PersonController@show');
     Route::post('/edit-person', 'Admin\PersonController@save');
+    Route::get('/get-edit-person', 'Admin\PersonController@save')->name('get-edit-person');
 
     Route::get('/move-hymn-files', 'Admin\MediaImportController@showMoveHymns');
     Route::post('/move-hymn-files', 'Admin\MediaImportController@moveHymns');

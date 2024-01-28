@@ -10,6 +10,10 @@ class Stanza
     {
         $this->text = $text;
         $this->lines = explode("\n", $text);
+        if (end($this->lines) === '') {
+            array_pop($this->lines);
+        }
+
     }
 
     public function getText()

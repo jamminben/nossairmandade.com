@@ -60,11 +60,30 @@ class HymnController extends Controller
         $this->hymnData['hinarios'] = $this->loadHinarios();
         $this->hymnData['languages'] = $this->loadLanguages();
 
+        // dd($this->hymnData);
+        if(0 == $this->hymnData['hymnId']) {
+            $this->hymnData['title'] = 'Create New Hymn';
+        } else {
+            $this->hymnData['title'] = 'Edit Hymn';
+        }
         return view('admin.edit_hymn', $this->hymnData);
     }
 
     public function save(Request $request)
     {
+        //MAKE SURE USER HAS ACCESS TO THE HINARIO:
+        $canHinarios = auth()->user()->ownedHinarios()->pluck('id')->toArray();
+        $hinarioId = $request->get('hinario');
+        if(!in_array($hinarioId, $canHinarios)) {
+            return ['error'=>'unauthorized'];
+        }
+        if($request->get('hymnId') > 0) {
+            $hinarioId = Hymn::find( $request->get('hymnId') )->hinarios->first()->id;
+            if(!in_array($hinarioId, $canHinarios)) {
+                return ['error'=>'unauthorized'];
+            }
+        } 
+
         if ($request->get('hymnId') == 0) {
             $hymn = new Hymn();
             $this->saveHymnAndPrepareVariables($request->all(), $hymn);
@@ -81,12 +100,16 @@ class HymnController extends Controller
             }
         }
 
+        $this->hymnData['title'] = 'Edit Hymn';
+
         return view('admin.edit_hymn', $this->hymnData);
     }
 
     public function load()
     {
-        return view('admin.load_hymn');
+        $hinarios = auth()->user()->ownedHinarios()->with('hymns')->get();
+        return view('admin.load_hymn')
+            ->with(compact('hinarios'));
     }
 
     private function loadPersons()
@@ -113,7 +136,11 @@ class HymnController extends Controller
 
     private function loadHinarios()
     {
-        $hinariosObjects = Hinario::whereIn('type_id', [ HinarioTypes::LOCAL, HinarioTypes::INDIVIDUAL ])->get();
+        // $hinariosObjects = Hinario::whereIn('type_id', [ HinarioTypes::LOCAL, HinarioTypes::INDIVIDUAL ])->get();
+
+        $hinariosObjects = auth()->user()->ownedHinarios()
+            ->whereIn('type_id', [ HinarioTypes::LOCAL, HinarioTypes::INDIVIDUAL ])
+            ->get();
 
         $hinarios = [];
         foreach ($hinariosObjects as $hinario) {
@@ -381,5 +408,12 @@ class HymnController extends Controller
 
         // feedback
         $this->hymnData['feedback'] = $hymn->feedback;
+    }
+
+    public function feedback() {
+
+        $feedbacks = Feedback::all();
+
+        return view('admin.feedback')->with('feedbacks', $feedbacks);
     }
 }

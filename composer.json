@@ -16,6 +16,7 @@
         "laravel/ui": "^3.0",
         "livewire/livewire": "^2.10",
         "mpdf/mpdf": "^8.0",
+        "mpociot/versionable": "^4.3",
         "spatie/laravel-permission": "^5.7"
     },
     "require-dev": {

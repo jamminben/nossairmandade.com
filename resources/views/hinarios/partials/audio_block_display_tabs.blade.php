@@ -1,4 +1,4 @@
-@if (count($hinario->recordingSources) > 0)
+@if (!is_null($hinario) && isset($hinario->recordingSources) && count($hinario->recordingSources) > 0)
     <div class="vertical-tabs color3">
         <div class="tab-content hinario-player-tab" style="background-color: white;">
             @foreach ($hinario->recordingSources as $source)

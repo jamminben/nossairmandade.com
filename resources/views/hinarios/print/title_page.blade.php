@@ -76,11 +76,11 @@
 @endif
 @if (!empty($hinario->image_path))
     <div class="center">
-        <img src="{{ url($hinario->image_path) }}" width="80%" max-height="80%">
+        <img src="{{ public_path($hinario->image_path) }}" width="80%" max-height="80%">
     </div>
 @elseif (get_class($hinario) == \App\Models\Hinario::class && $hinario->type_id == 1)
     <div class="center">
-        <img src="{{ url($hinario->receivedBy->getPortrait()) }}" width="80%" max-height="80%">
+        <img src="{{ $hinario->receivedBy->getPortraitImage() }}" width="80%" max-height="80%">
     </div>
 @endif
 

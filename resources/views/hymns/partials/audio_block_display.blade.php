@@ -1,4 +1,4 @@
-@if (count($hymn->getRecordings()) > 0)
+@if ( !is_null($hymn) && count($hymn->getRecordings()) > 0)
     <div class="col-sm-12 col-md-12 text-left">
         @include('hymns.partials.audio_file_display', ['mediaFile' => $hymn->getRecordings()[0]])
 

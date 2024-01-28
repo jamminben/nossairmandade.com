@@ -8,11 +8,13 @@ use App\Models\UserHymnHinario;
 use App\Services\GlobalFunctions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Mpdf\Mpdf;
 
 class UserHinarioController extends Controller
 {
-    const IMAGE_FILE_ROOT = '/home/dh_nossa/nossairmandade.com/public';
+    //just use public_path()
+    // const IMAGE_FILE_ROOT = '/home/dh_nossa/nossairmandade.com/public';
     const IMAGE_URL_ROOT = '/images/userhinarios/';
 
     public function deleteUserHinario($hinarioId)
@@ -70,8 +72,11 @@ class UserHinarioController extends Controller
                 break;
 
             case 'new_image':
-                $imageDir = self::IMAGE_FILE_ROOT . self::IMAGE_URL_ROOT . $userHinario->id .'/';
+                $imageDir = public_path() . self::IMAGE_URL_ROOT . $userHinario->id .'/';
 
+                if (!file_exists(public_path() . self::IMAGE_URL_ROOT)) {
+                    mkdir(public_path() . self::IMAGE_URL_ROOT);
+                }
                 if (!file_exists($imageDir)) {
                     mkdir($imageDir);
                 }
@@ -153,6 +158,7 @@ class UserHinarioController extends Controller
 
     public function showPdf($code)
     {
+
         $html = '';
 
         $hinario = UserHinario::where('code', $code)
