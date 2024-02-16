@@ -19,7 +19,7 @@
         "spatie/laravel-permission": "^5.7"
     },
     "require-dev": {
-        "barryvdh/laravel-debugbar": "^3.3",
+        "barryvdh/laravel-debugbar": "^3.9",
         "beyondcode/laravel-dump-server": "^1.0",
         "filp/whoops": "^2.0",
         "fzaninotto/faker": "^1.4",
