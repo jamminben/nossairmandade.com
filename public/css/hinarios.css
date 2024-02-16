@@ -39,7 +39,7 @@
 .hymn-list-name {
     padding-bottom: 10px !important;
     margin-bottom: 10px !important;
-    text-indent: -20px;
+    /* text-indent: -20px; */
 }
 
 .hymn-list-number {

@@ -62,6 +62,7 @@ class StaticPageController extends Controller
 
     public function index()
     {
+        
         $carousels = Carousel::where('is_active', 1)->orderBy('list_order')->get();
 
         return view('home', [ 'carousels' => $carousels ]);

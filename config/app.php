@@ -161,6 +161,7 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
+        Barryvdh\Debugbar\ServiceProvider::class,
         // \Chumper\Zipper\ZipperServiceProvider::class,
 
         /*
@@ -227,6 +228,7 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'Zipper' => \Chumper\Zipper\Zipper::class,
+        'Debugbar' => Barryvdh\Debugbar\Facade::class,
 
     ],
 
