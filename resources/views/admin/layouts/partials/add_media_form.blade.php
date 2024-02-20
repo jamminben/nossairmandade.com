@@ -8,7 +8,7 @@
             <select name="source_id">
                 <option value="">Select Source</option>
                 @foreach ($allMediaSources as $source)
-                    <option value="{{ $source->id }}">{{ $source->description }} @if (!empty($source->url)) ({{ $source->url }}) @endif</option>
+                    <option value="{{ $source->media_source_id }}">{{ $source->description }} @if (!empty($source->url)) ({{ $source->url }}) @endif</option>
                 @endforeach
             </select>
             <input type="text" name="new_source_description" placeholder="New Source Name">
