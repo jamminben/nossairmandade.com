@@ -5,6 +5,7 @@ use App\Enums\HinarioTypes;
 use App\Enums\MediaTypes;
 use App\Services\GlobalFunctions;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\File;
 
 class Person extends ModelWithTranslations
 {
@@ -25,13 +26,21 @@ class Person extends ModelWithTranslations
     public function getPortrait()
     {
         foreach ($this->personImages as $personImage) {
-            if ($personImage->is_portrait == 1) {
-                if (getUrlExists(url($personImage->image->path))) {
-                    return $personImage->image->path;
-                } else {
-                    return url($personImage->image->path);
-                }
+            $imagePath = ltrim($personImage->image->path,'/');
+            $filePath = public_path($imagePath);
+            $filePath = str_replace('\\', '/', $filePath);
+            if (File::exists($filePath)) {
+                return $personImage->image->path;
+            } else {
+                return self::DEFAULT_PORTRAIT_PATH;
             }
+            // if ($personImage->is_portrait == 1) {
+            //     if (getUrlExists(url($personImage->image->path))) {
+            //         return $personImage->image->path;
+            //     } else {
+            //         return url($personImage->image->path);
+            //     }
+            // }
         }
 
         return self::DEFAULT_PORTRAIT_PATH;

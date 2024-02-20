@@ -40,9 +40,8 @@ class HinarioController extends Controller
     public function showPreloaded($hinarioId, $hinarioName = null)
     {
         $hinario = Hinario::where('id', $hinarioId)->first();
-
         GlobalFunctions::setActiveHinario($hinarioId);
-
+        
         // this is for the add hymn forms
         if (Auth::check()) {
             $userHinarios = UserHinario::where('user_id', Auth::user()->getAuthIdentifier())->orderBy('name')->get();
@@ -71,10 +70,9 @@ class HinarioController extends Controller
     public function userHinario($code)
     {
         $hinario = UserHinario::where('code', $code)->first();
-
         // this is for the add hymn forms
         if (Auth::check()) {
-            $userHinarios = UserHinario::where('user_id', Auth::user()->getAuthIdentifier())->orderBy('name')->get();
+            $userHinarios = UserHinario::where('user_id', Auth::user()->getAuthIdentifier())->where('id','!=',$hinario->id)->orderBy('name')->get();
         } else {
             $userHinarios = [];
         }

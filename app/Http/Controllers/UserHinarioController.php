@@ -70,17 +70,17 @@ class UserHinarioController extends Controller
                 break;
 
             case 'new_image':
-                $imageDir = self::IMAGE_FILE_ROOT . self::IMAGE_URL_ROOT . $userHinario->id .'/';
-
+                // $imageDir = self::IMAGE_FILE_ROOT . self::IMAGE_URL_ROOT . $userHinario->id .'/';
+                $imageDir = str_replace('\\', '/', public_path('images/userhinarios/'. $userHinario->id .'/'));
+                
                 if (!file_exists($imageDir)) {
-                    mkdir($imageDir);
+                    mkdir($imageDir,'0775',true);
                 }
                 $this->deleteFiles($imageDir);
-
-                $location = $imageDir . '/' . basename($_FILES['new_image']['name']);
-
+                
+                $location = $imageDir . basename($_FILES['new_image']['name']);
+                
                 move_uploaded_file($_FILES['new_image']['tmp_name'], $location);
-
                 $userHinario->image_path = self::IMAGE_URL_ROOT . $userHinario->id . '/' . basename($_FILES['new_image']['name']);
                 $userHinario->save();
 

@@ -2,7 +2,7 @@
 <ul id="login-dp" class="dropdown-menu extend-right">
     <li>
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-12 text-center">
                 <div class="help-block text-center">
                     {{ __('universal.add_hymn_form.header') }}
                     <a data-toggle="tooltip" title="{!! __('universal.add_hymn_form.add_tooltip') !!}" style="overflow: visible !important; font-size: inherit;">
@@ -48,13 +48,17 @@
                 </div>
 
                 <form class="add_hymn_{{ $hymn->id }}_to_new" role="form" method="POST" action="{{ url('/add-hymn-to-user-hinario') }}" accept-charset="UTF-8" id="add-hymn-{{ $hymn->id }}-to-user-hinario">
-                    <div class="form-group">
+                    <div class="form-group row">
                             @csrf
                             <label class="sr-only" for="new_hinario_name">{{ __('universal.add_hymn_form.new_hinario_name') }}</label>
-                            <input name="new_hinario_name" type="text" class="new_hinario_name add-hymn-text-input" id="new_hinario_name" placeholder="{{ __('universal.add_hymn_form.new_name_placeholder') }}">
+                            <!-- <input name="new_hinario_name" type="text" class="new_hinario_name add-hymn-text-input" id="new_hinario_name" placeholder="{{ __('universal.add_hymn_form.new_name_placeholder') }}"> -->
+                            <input name="new_hinario_name" type="text" class="new_hinario_name" id="new_hinario_name" placeholder="{{ __('universal.add_hymn_form.new_name_placeholder') }}">
+
                             <input type="hidden" name="hymn_id" value="{{ $hymn->id }}" class="hymn_id">
                             <input type="hidden" name="action" value="create" class="action">
-                            <button type="submit" class="btn btn-primary btn-block add-hymn-button">{{ __('universal.add_hymn_form.create_new_hinario') }}</button>
+                    </div>
+                    <div clss="form-group row">
+                        <button type="submit" class="btn btn-primary btn-block add-hymn-button">{{ __('universal.add_hymn_form.create_new_hinario') }}</button>
                     </div>
                     <div class="add_hymn_{{ $hymn->id }}_to_new_response add-hymn-response" id="add_hymn_{{ $hymn->id }}_to_new_response"></div>
                 </form>

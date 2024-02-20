@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\HinarioTypes;
 use App\Models\Hinario;
+use App\Models\Person;
 use App\Models\UserHinario;
 use App\Services\PersonService;
 use Illuminate\Support\Facades\Auth;
@@ -21,29 +22,32 @@ class HinarioListController extends Controller
 
     public function individual()
     {
-        $hinarios = Hinario::where('type_id', HinarioTypes::INDIVIDUAL)
-            ->with('receivedBy')
-            ->get();
+        $persons = Person::has('hinarios')->with('translations','images','personImages','hinarios')->orderBy('display_name')->get();
+        $personsByListOrder = $persons->sortByDesc('list_order');
+        // orderBy('list_order','desc')
+        // $hinarios = Hinario::where('type_id', HinarioTypes::INDIVIDUAL)
+        // ->with('receivedBy')
+        // ->take(2)
+        // ->get();
+        // dd($hinarios);
+        // $people = [];
+        // $tableOfContents = [];
+        // foreach($hinarios as $hinario) {
+        //     $people[$hinario->receivedBy->list_order][$hinario->receivedBy->display_name] = $hinario->receivedBy;
+        //     $tableOfContents[$hinario->receivedBy->display_name] = $hinario->receivedBy;
+        // }
+        
+        // $listOrders = array_keys($people);
+        // $peopleList = [];
+        // foreach ($listOrders as $listOrder) {
+        //     $peopleList = array_merge($peopleList, $people[$listOrder]);
+        // }
+        // person/3/PadrinhoAlfredo
+        // ksort($tableOfContents);
+        // dd(array_values($peopleList)[0]->hinarios[0]->getSlug());
+        // return view('hinarios.individuals', [ 'people' => array_values($peopleList), 'tableOfContents' => $tableOfContents ]);
+        return view('hinarios.individuals', [ 'tableOfContents' => $persons, 'people'=> $personsByListOrder]);
 
-        $people = [];
-        $tableOfContents = [];
-        foreach($hinarios as $hinario) {
-            $people[$hinario->receivedBy->list_order][$hinario->receivedBy->display_name] = $hinario->receivedBy;
-            $tableOfContents[$hinario->receivedBy->display_name] = $hinario->receivedBy;
-        }
-
-        $listOrders = array_keys($people);
-        rsort($listOrders);
-
-        $peopleList = [];
-        foreach ($listOrders as $listOrder) {
-            ksort($people[$listOrder]);
-            $peopleList = array_merge($peopleList, $people[$listOrder]);
-        }
-
-        ksort($tableOfContents);
-
-        return view('hinarios.individuals', [ 'people' => array_values($peopleList), 'tableOfContents' => $tableOfContents ]);
     }
 
     public function compilations()

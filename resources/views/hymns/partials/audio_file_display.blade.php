@@ -2,7 +2,7 @@
     <div class="audio-player-line">
         <div class="audio-player">
             <audio controls id="top_player">
-                <source src="{{ $mediaFile->url }}" type="audio/mpeg" />
+                <source src="{{ asset($mediaFile->url) }}" type="audio/mpeg" />
                 <!-- <source src="path-to-preview.ogg" type="audio/ogg" /> -->
             </audio>
         </div>

@@ -7,7 +7,7 @@
             @foreach ($hinario->hymns as $hymn)
                 @if (!empty($hymn->recordings->$sourceId))
                     <audio controls preload="none" title="{{ $hymn->number }}. {{ $hymn->name }}" class="playlist_{{ $sourceId }}">
-                        <source src="{{ mb_convert_encoding($hymn->recordings->$sourceId->url, 'ISO-8859-1') }}" type="audio/mpeg" />
+                        <source src="{{ asset($hymn->recordings->$sourceId->url) }}" type="audio/mpeg" />
                         <!-- <source src="path-to-preview.ogg" type="audio/ogg" /> -->
                     </audio>
                     @php

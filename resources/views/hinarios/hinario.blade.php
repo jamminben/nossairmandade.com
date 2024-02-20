@@ -59,14 +59,16 @@
         @foreach ($hinario->hymnHinarios as $hymnHinario)
             @if ($hinario->displaySections && $hymnHinario->section != $sectionName)
                 <div class="row">
-                    <div class="hinario-section-name">{{ $hymnHinario->section }}</div>
+                    <div class="col">
+                        <div class="hinario-section-name" style="margin-left:14px;">{{ $hymnHinario->section }}</div>
+                    </div>
                 </div>
                 @php
                     $sectionName = $hymnHinario->section
                 @endphp
             @endif
             <div class="hymn-list-name">
-                <a href="{{ url($hymnHinario->hymn->slug) }}">
+                <a href="{{ url($hymnHinario->hymn->slug) }}" class="ml-sm-5">
                     {{ $hymnHinario->list_order }}.
                     @if (strlen($hymnHinario->hymn->name) > 30)
                         @php
@@ -100,7 +102,7 @@
             @include ('hinarios.partials.audio_block_display_tabs')
         </div>
         <div class="row">
-            @include('layouts.partials.other_media_hinario', [ 'entity' => $hinario ])
+            @include('layouts.partials.other_media_hinario')
         </div>
         <div class="row">
             <div class="col-sm-12 col-md-12 col-lg-12 padding-top-20">

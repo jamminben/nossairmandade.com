@@ -14,28 +14,32 @@
     <div class="col-sm-6 col-md-7 col-lg-7">
         <div class="mobile-active"><a href="#toc" style="padding-bottom: 20px;">{{ __('hinarios.individuals.jump') }}</a></div>
         <ul class="list1 no-bullets no-top-border no-bottom-border">
-        @foreach ($people as $person)
+            @foreach ($people as $person)
             <div class="name-anchor"><a name="{{ $person->id }}"></a></div>
+            
             <li>
                 <div class="row">
                     <div class="col-md-5">
                         <div class="item-media"> <img src="{{ url($person->getPortrait()) }}" alt="">
-                            <div class="media-links"> <a class="abs-link" title="" href="{{ url($person->getSlug()) }}"></a> </div>
+                        <div class="media-links"> <a class="abs-link" title="" href="{{ url($person->getSlug()) }}"></a> </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-7">
+                    <div class="entry-meta no-avatar ns content-justify">
+                        <div class="inline-content big-spacing small-text bigbig darklinks">
+                            <span>
+                                <a href="{{ url($person->getSlug()) }}">{{ $person->display_name }}</a>
+                            </span>
                         </div>
                     </div>
-                    <div class="col-md-7">
-                        <div class="entry-meta no-avatar ns content-justify">
-                            <div class="inline-content big-spacing small-text bigbig darklinks">
-                                <span>
-                                    <a href="{{ url($person->getSlug()) }}">{{ $person->display_name }}</a>
-                                </span>
-                            </div>
-                        </div>
+
                         @if ($person->getDescription() != '')
                         <div class="item-content border-bottom small-padding">
                             <p>{{ $person->getDescription() }}</p>
                         </div>
                         @endif
+
                         <div class="item-content small-padding padding-top-20 nossa-indent">
                             @if (count($person->hinarios) > 1)
                                 <p>Hinários:</p>
@@ -58,6 +62,7 @@
                             @endforeach
                             </ul>
                         </div>
+
                     </div>
                 </div>
             </li>
@@ -65,6 +70,7 @@
         @endforeach
         </ul>
     </div>
+
     <!--eof .col-sm-8 (main content)-->
 
     <!-- sidebar -->
