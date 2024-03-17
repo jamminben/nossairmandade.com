@@ -10,6 +10,7 @@ use App\Services\GlobalFunctions;
 use App\Services\HinarioService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Mpdf\Mpdf;
 
 class HinarioController extends Controller
@@ -30,7 +31,7 @@ class HinarioController extends Controller
         $this->testStanza(1, 2);
     }
 
-    
+
     public function testStanza3() {
         // //EU PEDI E TIVE O TOQUE
         $this->testStanza(1, 534);
@@ -139,6 +140,19 @@ class HinarioController extends Controller
         $hinario = Hinario::where('id', $hinarioId)->first();
 
         return view('hinarios.plain-text', [ 'hinario' => $hinario, 'sections' => $hinario['sections'] ]);
+    }
+
+    public function showEpub($hinarioId, $hinarioName)
+    {
+
+        $hinario = Hinario::find($hinarioId);
+
+        $filePath = $hinario->cacheEpub();
+
+        //set the name of the file that will be given to the user
+        $fileName = $hinario->getName() . ".epub";
+
+        return Storage::download($filePath, $fileName);
     }
 
     public function showPdf($hinarioId, $hinarioName)

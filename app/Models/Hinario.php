@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Mpdf\Mpdf;
+use PHPePub\Core\EPub;
+
 
 class Hinario extends ModelWithTranslations
 {
@@ -415,10 +417,10 @@ class Hinario extends ModelWithTranslations
         }
         $this->totalPageCount ++;
         // if($loops > 100) return var_export($stanzas, 1); //return 'broken';
-        
+
         if($loops > count($stanzas)) return;
         $this->writeStanza($mpdf, $stanzas, $loops);
-        
+
 
     }
 
@@ -430,6 +432,73 @@ class Hinario extends ModelWithTranslations
     public $html;
     public $stanzas2;
 
+    public function cacheEpub() {
+
+        // i had to fix each(), now deprecated, in several places in the code of phpepub for this to work with php8.2
+
+        $this->hinario = Hinario::where('id', $this->id)
+            ->with(
+                'translations',
+                'sections',
+                'hymns',
+                'hymnHinarios',
+                'hymnHinarios.hinario',
+                'receivedBy',
+                'hymns.mediaFiles',
+                'hymns.translations',
+                'hymns.hymnHinarios',
+                'hymns.notationTranslations'
+            )
+            ->first();
+
+        $book = new EPub();
+
+        // Book metadata
+        $book->setTitle($this->hinario->getName());
+        // $book->setIdentifier("http://yourwebsite.com/books/yourbookid", EPub::IDENTIFIER_URI); // Use an appropriate identifier
+        $book->setLanguage("en"); // Set the language
+        $book->setAuthor("Author Name", "Nossa Irmandade");
+        // $book->setPublisher("Publisher Name", "http://publisherwebsite.com/");
+        $book->setDate(time()); // Current time as book creation date
+        // $book->setRights("Copyright © Your Name 2024");
+        // $book->setSourceURL("http://nossairmandade.com/books/yourbooktitle");
+
+        $sections = $this->hinario->getSections();
+
+        $this->hinarioHasTranslations = $this->hinario->hasTranslationsForLanguage(GlobalFunctions::getCurrentLanguage());
+
+        foreach ($sections as $section) {
+
+            $chapterTitle = $section->getName();
+
+            $chapterContent = "<h2>" . htmlspecialchars($chapterTitle) . "</h2>";
+
+            foreach ($this->hinario->getHymnsForSection($section->section_number) as $this->hymn) {
+
+                $stanzas = $this->hymn->stanzas($this->hymn->original_lanaguage_id);
+                // dd(count($stanzas));
+                // echo count($stanzas) . "<br>";
+                $stanzas2 = $this->hymn->stanzas(GlobalFunctions::getCurrentLanguage());
+
+                foreach ($stanzas as $i=>$stanza) {
+                    // Ensure stanza text is properly escaped for HTML
+                    $chapterContent .= "<p>" . nl2br(htmlspecialchars($stanza->getText())) . "</p>";
+                    if(isset($stanzas2[$i])) {
+                        $chapterContent .= "<p>" . nl2br(htmlspecialchars($stanzas2[$i]->getText())) . "</p>";
+                    }
+                }
+
+            }
+            $book->addChapter($chapterTitle, 'Chapter' . $section->section_number . '.xhtml', $chapterContent);
+        }
+
+        // exit;
+        $book->finalize();
+
+        $filePath = 'hinario_epubs/' . $this->id . ".epub";
+        Storage::put($filePath, $book->getBook());
+        return $filePath;
+    }
 
     public function cachePdf() {
 
@@ -512,7 +581,7 @@ class Hinario extends ModelWithTranslations
         $this->html .= view('hinarios.print.final_page')->render();
 
 
-        
+
         $pdfContent = $mpdf->Output($this->id.'filename.pdf', \Mpdf\Output\Destination::STRING_RETURN);
 
         Storage::put('hinario_pdfs/'.$this->id, $pdfContent);

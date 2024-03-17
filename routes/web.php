@@ -15,7 +15,7 @@ if(app()->environment('local')) {
         return redirect()->route('home');
     });
 }
- 
+
 
 Route::get('/', 'StaticPageController@index')->name('home');
 Route::get('/index.php', 'StaticPageController@index');
@@ -108,6 +108,7 @@ Route::get('/hinario/{hinarioId}/{hinarioName?}', 'HinarioController@showPreload
 Route::get('/hinario.php?hid={hinarioId}', 'HinarioController@show');
 
 Route::get('/hinario/{hinarioId}/{hinarioName?}/pdf', 'HinarioController@showPdf');
+Route::get('/hinario/{hinarioId}/{hinarioName?}/epub', 'HinarioController@showEpub');
 
 Route::get('/raw_hinario.php?hid={hinarioId}', 'HinarioController@plainText');
 
@@ -134,7 +135,7 @@ Route::group(['middleware'=>'auth', 'prefix' => 'admin'], function() {
     Route::post('/edit-hymn', 'Admin\HymnController@save');
     Route::get('/edit-hymn', 'Admin\HymnController@save')->name('get-edit-hymn');
 });
- 
+
 Route::group(['middleware' => ['admin'], 'prefix' => 'admin'], function() {
 
 
