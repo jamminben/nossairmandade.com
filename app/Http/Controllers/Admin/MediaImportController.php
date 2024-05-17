@@ -74,11 +74,13 @@ class MediaImportController extends Controller
 
     private function addMediaToHymn($hymnId, $sourceId)
     {
-        $destinationRoot = '/home/dh_nossa/nossairmandade.com/public/media/hymns/';
+        // $destinationRoot = '/home/dh_nossa/nossairmandade.com/public/media/hymns/';
+        $destinationRoot = str_replace('\\', '/', public_path('media/hymns/'));
+
 
         $uploadFile = $_FILES['new_media']['tmp_name'];
         $oldName = $_FILES['new_media']['name'];
-
+        
         if (!file_exists($destinationRoot . $hymnId)) {
             mkdir($destinationRoot . $hymnId);
         }

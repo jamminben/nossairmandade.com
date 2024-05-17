@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css?family=Raleway:300,400,400i,600,600i,700");
 /**
 *** Table Of Contents
-*
+* test
 * Bootstrap Overrides
   - columns
   - container
@@ -2889,7 +2889,7 @@ p > i + [class*="rt-icon"] {
 .owl-dots .owl-dot {
 	display: inline-block;
 	zoom: 1;
-	*display: inline;
+	/* *display: inline; */
 	padding: 0 10px;
 }
 
@@ -3418,7 +3418,7 @@ html[xmlns] .slides {
 
 /* Direction Nav */
 .flex-direction-nav {
-	*height: 0;
+	/* height: 0; */
 }
 
 .flex-direction-nav a {
@@ -3556,7 +3556,7 @@ html[xmlns] .slides {
 	vertical-align: middle;
 	padding: 0 5px;
 	zoom: 1;
-	*display: inline;
+	/* display : inline; */
 }
 
 .flex-control-nav li:first-child {
@@ -11483,7 +11483,7 @@ body.active-side-header.slide-right .page_header_side {
 	.sf-menu li {
 		white-space: nowrap;
     /* no need for Supersubs plugin */
-		*white-space: normal;
+		/* *white-space: normal; */
     /* ...unless you support IE7 (let it wrap) */
 		transition: background .2s;
 	}
@@ -16546,20 +16546,87 @@ a.color-icon.border-icon:hover {
 	text-transform: uppercase;
 }
 
+@media (min-width: 568px) {
+	header.page_header {
+	  max-width: 769px;
+	  margin: auto;
+	  height: 199px;
+	}
+  }
 
+@media (min-width: 768px) {
+  header.page_header {
+	max-width: 750px;
+	margin: auto;
+  }
+}
+
+@media (min-width: 992px) {
+  header.page_header {
+	max-width: 970px;
+	height: 199px;
+  }
+}
+
+@media (min-width: 1200px) {
+	header.page_header {
+		min-width: 1168px;
+		height: 199px;
+	}
+}
+@media (min-width: 1230px) {
+	header.page_header {
+		min-width: 1194px;
+		height: 199px;
+	}
+}
+@media (min-width: 1399px) {
+	header.page_header {
+	  min-width: 1198px;
+	  height: 199px;
+	}
+}
+
+@media (min-width: 1400px) {
+	header.page_header {
+	  min-width: 1145px;
+	  height: 147px;
+	}
+}
+
+@media (min-width: 1590px) {
+	header.page_header {
+	  min-width: 1560px;
+	  height: 147px;
+	}
+}
+
+/* @media(min-width:1590px) {
+	header.page_header {
+		min-width: 1560px;
+		height: 146px;
+	}
+}
 @media (min-width: 768px) {
     header.page_header {
         max-width: 750px;
         margin: auto;
     }
-}
+} */
 
-@media (min-width: 992px) {
+/* @media (min-width: 992px) {
     header.page_header {
         max-width: 1150px;
-
     }
-}
+} */
+
+
+/* @media (min-width: 992px) {
+    header.page_header {
+        max-width: 966px;
+		height: 199px;
+    }
+} */
 
 @media (min-width: 768px) {
     .navbar-nav > li > a {
